@@ -22,6 +22,8 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
+	user.UID = uuid.New().String()
+
 	if err := user.Create(); err != nil {
 		c.JSON(
 			http.StatusInternalServerError,

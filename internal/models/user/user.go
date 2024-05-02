@@ -8,6 +8,7 @@ import (
 
 type User struct {
 	ID        int64     `json:"ID" gorm:"primary_key"`
+	UID       string    `json:"uid"`
 	FirstName string    `json:"first_name"`
 	LastName  string    `json:"last_name"`
 	KaraokeID int64     `json:"karaoke_id"`

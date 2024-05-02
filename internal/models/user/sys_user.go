@@ -8,6 +8,7 @@ import (
 
 type SysUser struct {
 	ID        int64     `json:"ID" gorm:"primary_key"`
+	UID       string    `json:"uid"`
 	RoleID    int64     `json:"role_id"`
 	FirstName string    `json:"first_name"`
 	LastName  string    `json:"last_name"`

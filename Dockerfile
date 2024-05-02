@@ -13,4 +13,4 @@ RUN CGO_ENABLED=0 go build -o kcloud ./main.go
 
 EXPOSE 8080
 
-CMD ["/kcloud"]
+CMD ["./kcloud"]

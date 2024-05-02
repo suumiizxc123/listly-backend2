@@ -23,6 +23,8 @@ func CreateSysUser(c *gin.Context) {
 		return
 	}
 
+	sysUser.UID = uuid.New().String()
+
 	if err := sysUser.Create(); err != nil {
 		c.JSON(
 			http.StatusInternalServerError,

@@ -2,17 +2,25 @@ package org_route
 
 import (
 	"kcloudb1/internal/handlers/org_handler"
+	"kcloudb1/internal/middleware"
 
 	"github.com/gin-gonic/gin"
 )
 
-func OrgRoute(r *gin.RouterGroup) {
-	orgRoute := r.Group("/org")
+func OrgSysRoute(r *gin.RouterGroup) {
+	orgSysRoute := r.Group("/sys-user/org")
 	{
-		orgRoute.POST("/", org_handler.CreateOrg)
-		orgRoute.PATCH("/", org_handler.UpdateOrg)
-		orgRoute.GET("/", org_handler.GetOrgList)
-		orgRoute.GET("/by-id", org_handler.GetOrg)
-		orgRoute.DELETE("/by-id", org_handler.DeleteOrg)
+		orgSysRoute.POST("/and-user", middleware.AuthSysUser(), org_handler.CreateOrgAndUser)
+		orgSysRoute.PATCH("/", org_handler.UpdateOrg)
+		orgSysRoute.GET("/", middleware.AuthSysUser(), middleware.Paginate(), org_handler.GetOrgList)
+
+		orgSysRoute.DELETE("/", org_handler.DeleteOrg)
+	}
+}
+
+func OrgRoute(r *gin.RouterGroup) {
+	orgRoute := r.Group("/user/org")
+	{
+		orgRoute.GET("/", middleware.AuthUser(), org_handler.GetOrgListUser)
 	}
 }

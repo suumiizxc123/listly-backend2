@@ -51,6 +51,7 @@ func main() {
 	song_route.SongCategoryCombinationRoute(v1)
 
 	org_route.OrgRoute(v1)
+	org_route.OrgSysRoute(v1)
 
 	common_route.LanguageRoute(v1)
 

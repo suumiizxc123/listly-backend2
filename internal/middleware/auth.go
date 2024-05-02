@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"encoding/json"
-	"fmt"
 	"kcloudb1/internal/config"
 	"kcloudb1/internal/models/user"
 	"kcloudb1/internal/utils"
@@ -48,7 +47,7 @@ func AuthSysUser() gin.HandlerFunc {
 			return
 		}
 
-		if sysUserDB.ID == 0 && sysUserDB.ID != sysUser.ID {
+		if sysUserDB.ID == 0 && sysUserDB.UID != sysUser.UID {
 			c.JSON(http.StatusForbidden, utils.Error(
 				"Forbidden",
 				"Forbidden",
@@ -105,10 +104,7 @@ func AuthUser() gin.HandlerFunc {
 			return
 		}
 
-		fmt.Println("userDB", userDB)
-		fmt.Println("userRS", userRS)
-
-		if userDB.ID == 0 && userDB.ID != userRS.ID {
+		if userDB.ID == 0 && userDB.UID != userRS.UID {
 
 			c.JSON(http.StatusForbidden,
 				utils.Error(
