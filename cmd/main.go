@@ -3,7 +3,11 @@ package main
 import (
 	"io"
 	"kcloudb1/internal/config"
-	"kcloudb1/internal/routes"
+	"kcloudb1/internal/routes/artist_route"
+	"kcloudb1/internal/routes/common_route"
+	"kcloudb1/internal/routes/org_route"
+	"kcloudb1/internal/routes/song_route"
+	"kcloudb1/internal/routes/user_route"
 	"log"
 	"net/http"
 	"os"
@@ -41,8 +45,23 @@ func main() {
 
 	v1 := r.Group("/api/v1")
 
-	routes.SysUserRoute(v1)
-	routes.UserRoute(v1)
+	user_route.SysUserRoute(v1)
+	user_route.UserRoute(v1)
+	user_route.ServiceLogRoute(v1)
+
+	song_route.SongRoute(v1)
+	song_route.SongCategoryRoute(v1)
+	song_route.SongCategoryCombinationRoute(v1)
+
+	org_route.OrgRoute(v1)
+
+	common_route.LanguageRoute(v1)
+
+	artist_route.ArtistTypeRoute(v1)
+	artist_route.ArtistSongRoute(v1)
+	artist_route.ArtistProfileRoute(v1)
+	artist_route.ArtistMemberRoute(v1)
+	artist_route.ArtistMemberSongRoute(v1)
 
 	r.Run()
 }

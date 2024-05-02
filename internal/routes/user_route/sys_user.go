@@ -1,4 +1,4 @@
-package routes
+package user_route
 
 import (
 	"kcloudb1/internal/handlers/user_handler"

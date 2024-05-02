@@ -1,4 +1,4 @@
-package orghandler
+package org_handler
 
 import (
 	"kcloudb1/internal/models/org"
