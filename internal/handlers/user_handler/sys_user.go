@@ -1,12 +1,14 @@
 package user_handler
 
 import (
+	"kcloudb1/internal/config"
 	"kcloudb1/internal/models/user"
 	"kcloudb1/internal/utils"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 func CreateSysUser(c *gin.Context) {
@@ -30,7 +32,7 @@ func CreateSysUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, utils.Success("System user created", sysUser))
+	c.JSON(200, utils.Success("System user created", struct{}{}))
 
 }
 
@@ -74,6 +76,8 @@ func GetSysUser(c *gin.Context) {
 		return
 	}
 
+	sysUser.Password = ""
+
 	c.JSON(200, utils.Success("System user", sysUser))
 }
 
@@ -90,6 +94,11 @@ func GetSysUserList(c *gin.Context) {
 			utils.Error("System user list not found", err.Error()),
 		)
 		return
+	}
+
+	var i int
+	for i = 0; i < len(sysUsers); i++ {
+		sysUsers[i].Password = ""
 	}
 
 	c.JSON(200, utils.Success("System user list", sysUsers))
@@ -112,7 +121,6 @@ func LoginSysUser(c *gin.Context) {
 	sysUser, err := sysUser.Login(input.Phone, input.Password)
 
 	// add redis token generate
-
 	if err != nil {
 
 		c.JSON(
@@ -121,6 +129,32 @@ func LoginSysUser(c *gin.Context) {
 		)
 		return
 	}
+
+	sysUser.Password = ""
+
+	token := uuid.New().String()
+
+	jsonSysUser, err := sysUser.MarshalJSON()
+	if err != nil {
+
+		c.JSON(
+			http.StatusInternalServerError,
+			utils.Error("System user login failed in marshal json", err.Error()),
+		)
+		return
+	}
+
+	if err := config.RS.Set(token, string(jsonSysUser), 0).Err(); err != nil {
+
+		c.JSON(
+			http.StatusInternalServerError,
+			utils.Error("System user login failed in set redis", err.Error()),
+		)
+
+		return
+	}
+
+	sysUser.Token = token
 
 	c.JSON(200, utils.Success("System user login", sysUser))
 

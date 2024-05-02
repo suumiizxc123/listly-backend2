@@ -1,16 +1,18 @@
 package user_handler
 
 import (
+	"kcloudb1/internal/config"
 	"kcloudb1/internal/models/user"
 	"kcloudb1/internal/utils"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 func CreateUser(c *gin.Context) {
-	var user user.SysUser
+	var user user.User
 
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(
@@ -28,12 +30,65 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
+	user.Password = ""
+
 	c.JSON(200, utils.Success("User created", user))
+}
+
+func LoginUser(c *gin.Context) {
+	var input user.UserLoginInput
+	var user user.User
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(
+			http.StatusBadRequest,
+			utils.Error("Login fields required", err.Error()),
+		)
+		return
+	}
+
+	user, err := user.Login(input.Phone, input.Password)
+
+	if err != nil {
+		c.JSON(
+			http.StatusInternalServerError,
+			utils.Error("Login failed", err.Error()),
+		)
+		return
+	}
+
+	user.Password = ""
+
+	token := uuid.New().String()
+
+	jsonUser, err := user.MarshalJSON()
+
+	if err != nil {
+
+		c.JSON(
+			http.StatusInternalServerError,
+			utils.Error("Login failed", err.Error()),
+		)
+		return
+	}
+
+	if err := config.RS.Set(token, jsonUser, 0).Err(); err != nil {
+
+		c.JSON(
+			http.StatusInternalServerError,
+			utils.Error("Login failed", err.Error()),
+		)
+		return
+	}
+
+	user.Token = token
+
+	c.JSON(200, utils.Success("Login successful", user))
 }
 
 func GetUser(c *gin.Context) {
 	var err error
-	var user user.SysUser
+	var user user.User
 	id, ok := c.GetQuery("id")
 
 	if !ok {
@@ -70,12 +125,14 @@ func GetUser(c *gin.Context) {
 		return
 	}
 
+	user.Password = ""
+
 	c.JSON(200, utils.Success("User found", user))
 }
 
 func GetUserList(c *gin.Context) {
 	var err error
-	var user user.SysUser
+	var user user.User
 
 	users, err := user.GetList()
 
@@ -87,11 +144,16 @@ func GetUserList(c *gin.Context) {
 		return
 	}
 
+	var i int
+	for i = 0; i < len(users); i++ {
+		users[i].Password = ""
+	}
+
 	c.JSON(200, utils.Success("User list", users))
 }
 
 func UpdateUser(c *gin.Context) {
-	var user user.SysUser
+	var user user.User
 
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(
@@ -109,16 +171,30 @@ func UpdateUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, utils.Success("User updated", user))
+	c.JSON(200, utils.Success("User updated", struct{}{}))
 }
 
 func DeleteUser(c *gin.Context) {
-	var user user.SysUser
+	var user user.User
+	var err error
+	id, ok := c.GetQuery("id")
 
-	if err := c.ShouldBindJSON(&user); err != nil {
+	if !ok {
+
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("User fields required", err.Error()),
+			utils.Error("User id required", "id must be required"),
+		)
+		return
+	}
+
+	user.ID, err = strconv.ParseInt(id, 10, 64)
+
+	if err != nil {
+
+		c.JSON(
+			http.StatusBadRequest,
+			utils.Error("User id cannot be parsed", err.Error()),
 		)
 		return
 	}
@@ -131,5 +207,5 @@ func DeleteUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, utils.Success("User deleted", user))
+	c.JSON(200, utils.Success("User deleted", struct{}{}))
 }

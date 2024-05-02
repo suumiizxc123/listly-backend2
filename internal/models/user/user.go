@@ -1,6 +1,7 @@
 package user
 
 import (
+	"encoding/json"
 	"kcloudb1/internal/config"
 	"time"
 )
@@ -16,6 +17,7 @@ type User struct {
 	Password  string    `json:"password"`
 	IsActive  int64     `json:"is_active"`
 	CreatedAt time.Time `json:"created_at"`
+	Token     string    `gorm:"-" json:"token, omitempty"`
 }
 
 func (c *User) TableName() string {
@@ -46,4 +48,25 @@ func (c *User) GetList() ([]User, error) {
 	}
 
 	return users, nil
+}
+
+type UserLoginInput struct {
+	Phone    string `json:"phone"`
+	Password string `json:"password"`
+}
+
+func (c *User) Login(phone string, password string) (User, error) {
+
+	var user User
+
+	if err := config.DB.Where("phone = ? AND password = ?", phone, password).First(&user).Error; err != nil {
+		return user, err
+	}
+
+	return user, nil
+}
+
+func (c *User) MarshalJSON() ([]byte, error) {
+
+	return json.Marshal(*c)
 }

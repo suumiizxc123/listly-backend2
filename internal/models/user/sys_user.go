@@ -1,6 +1,7 @@
 package user
 
 import (
+	"encoding/json"
 	"kcloudb1/internal/config"
 	"time"
 )
@@ -15,6 +16,7 @@ type SysUser struct {
 	Password  string    `json:"password"`
 	IsActive  int64     `json:"is_active"`
 	CreatedAt time.Time `json:"created_at"`
+	Token     string    `gorm:"-" json:"token, omitempty"`
 }
 
 // example json body of SysUser
@@ -95,4 +97,9 @@ func (c *SysUser) Login(phone string, password string) (SysUser, error) {
 	}
 
 	return user, nil
+}
+
+func (c *SysUser) MarshalJSON() ([]byte, error) {
+	return json.Marshal(*c)
+
 }
