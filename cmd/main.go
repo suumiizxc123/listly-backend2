@@ -3,6 +3,7 @@ package main
 import (
 	"io"
 	"kcloudb1/internal/config"
+	"kcloudb1/internal/routes"
 	"log"
 	"net/http"
 	"os"
@@ -38,6 +39,10 @@ func main() {
 	r.Use(Cors())
 	gin.DefaultWriter = io.MultiWriter(f)
 
-	
+	v1 := r.Group("/api/v1")
+
+	routes.SysUserRoute(v1)
+	routes.UserRoute(v1)
+
 	r.Run()
 }

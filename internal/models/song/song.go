@@ -1,6 +1,9 @@
 package song
 
-import "time"
+import (
+	"kcloudb1/internal/config"
+	"time"
+)
 
 type Song struct {
 	ID          int64     `json:"ID" gorm:"primary_key"`
@@ -18,4 +21,25 @@ type Song struct {
 
 func (c *Song) TableName() string {
 	return "song"
+}
+
+func (c *Song) Create() error {
+	return config.DB.Create(c).Error
+}
+
+func (c *Song) Update() error {
+	return config.DB.Updates(c).Error
+}
+
+func (c *Song) Delete() error {
+	return config.DB.Delete(c).Error
+}
+
+func (c *Song) Get() error {
+	return config.DB.Where("id = ?", c.ID).First(c).Error
+}
+
+func (c *Song) GetList() ([]Song, error) {
+	var list []Song
+	return list, config.DB.Find(&list).Error
 }

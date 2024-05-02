@@ -1,6 +1,9 @@
 package org
 
-import "time"
+import (
+	"kcloudb1/internal/config"
+	"time"
+)
 
 type Org struct {
 	ID          int64     `json:"ID" gorm:"primary_key"`
@@ -19,4 +22,30 @@ type Org struct {
 
 func (c *Org) TableName() string {
 	return "org"
+}
+
+func (c *Org) Create() error {
+	return config.DB.Create(c).Error
+}
+
+func (c *Org) Update() error {
+	return config.DB.Updates(c).Error
+}
+
+func (c *Org) Delete() error {
+	return config.DB.Delete(c).Error
+}
+
+func (c *Org) Get() error {
+	return config.DB.Where("id = ?", c.ID).First(c).Error
+}
+
+func (c *Org) GetList() ([]Org, error) {
+	var orgs []Org
+
+	if err := config.DB.Find(&orgs).Error; err != nil {
+		return nil, err
+	}
+
+	return orgs, nil
 }
