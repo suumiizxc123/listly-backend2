@@ -6,6 +6,7 @@ import (
 	"kcloudb1/internal/utils"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -24,6 +25,16 @@ func CreateSysUser(c *gin.Context) {
 	}
 
 	sysUser.UID = uuid.New().String()
+
+	if ok := sysUser.CheckEmailAndPhoneNotExist(); !ok {
+
+		c.JSON(
+			http.StatusInternalServerError,
+			utils.Error("System user creation failed", "email or phone already exist"),
+		)
+
+		return
+	}
 
 	if err := sysUser.Create(); err != nil {
 		c.JSON(
@@ -134,6 +145,15 @@ func LoginSysUser(c *gin.Context) {
 
 	sysUser.Password = ""
 
+	if sysUser.IsActive == 0 {
+
+		c.JSON(
+			http.StatusForbidden,
+			utils.Error("System user login failed", "inactive user"),
+		)
+		return
+	}
+
 	token := uuid.New().String()
 
 	jsonSysUser, err := sysUser.MarshalJSON()
@@ -146,7 +166,7 @@ func LoginSysUser(c *gin.Context) {
 		return
 	}
 
-	if err := config.RS.Set(token, string(jsonSysUser), 0).Err(); err != nil {
+	if err := config.RS.Set(token, string(jsonSysUser), 12*time.Hour).Err(); err != nil {
 
 		c.JSON(
 			http.StatusInternalServerError,

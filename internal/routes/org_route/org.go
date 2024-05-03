@@ -13,6 +13,7 @@ func OrgSysRoute(r *gin.RouterGroup) {
 		orgSysRoute.POST("/and-user", middleware.AuthSysUser(), org_handler.CreateOrgAndUser)
 		orgSysRoute.PATCH("/", org_handler.UpdateOrg)
 		orgSysRoute.GET("/", middleware.AuthSysUser(), middleware.Paginate(), org_handler.GetOrgList)
+		orgSysRoute.GET("/by-id", middleware.AuthSysUser(), org_handler.GetOrg)
 
 		orgSysRoute.DELETE("/", org_handler.DeleteOrg)
 	}

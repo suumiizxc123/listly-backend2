@@ -107,7 +107,7 @@ func DeleteOrg(c *gin.Context) {
 }
 
 func GetOrg(c *gin.Context) {
-	var org org.Org
+	var org org.OrgExtend
 	var err error
 
 	id, ok := c.GetQuery("id")
@@ -239,13 +239,14 @@ func CreateOrgAndUser(c *gin.Context) {
 		return
 	}
 
-	if err := input.Create(); err != nil {
+	orgc, err := input.Create()
+	if err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Org and user creation failed", err),
+			utils.Error("Org and user creation failed or email or phone already exist in user", err),
 		)
 		return
 	}
 
-	c.JSON(200, utils.Success("Org and user created", struct{}{}))
+	c.JSON(200, utils.Success("Org and user created", orgc))
 }

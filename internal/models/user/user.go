@@ -41,6 +41,21 @@ func (c *User) Get() error {
 	return config.DB.Where("id = ?", c.ID).First(c).Error
 }
 
+func (c *User) CheckEmailAndPhoneNotExist() bool {
+
+	var user User
+
+	if err := config.DB.Where("email = ? ", c.Email).First(&user).Error; err == nil {
+		return false
+	}
+
+	if err := config.DB.Where("phone = ? ", c.Phone).First(&user).Error; err == nil {
+		return false
+	}
+
+	return true
+}
+
 func (c *User) GetList() ([]User, error) {
 	var users []User
 

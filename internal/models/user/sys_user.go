@@ -50,6 +50,21 @@ func (c *SysUser) Get() error {
 	return config.DB.Where("id = ?", c.ID).First(c).Error
 }
 
+func (c *SysUser) CheckEmailAndPhoneNotExist() bool {
+
+	var user SysUser
+
+	if err := config.DB.Where("email = ? ", c.Email).First(&user).Error; err == nil {
+		return false
+	}
+
+	if err := config.DB.Where("phone = ? ", c.Phone).First(&user).Error; err == nil {
+		return false
+	}
+
+	return true
+}
+
 func (c *SysUser) GetList() ([]SysUser, error) {
 	var users []SysUser
 

@@ -1,6 +1,7 @@
 package org
 
 import (
+	"fmt"
 	"kcloudb1/internal/config"
 	"kcloudb1/internal/models/user"
 	"time"
@@ -69,10 +70,10 @@ type OrgAndUserInput struct {
 	Password  string `json:"password"`
 }
 
-func (c *OrgAndUserInput) Create() error {
+func (c *OrgAndUserInput) Create() (OrgExtend, error) {
 
 	tx := config.DB.Begin()
-	org := Org{
+	org := OrgExtend{
 		KaraokeName: c.KaraokeName,
 		Address:     c.Address,
 		Picture:     c.Picture,
@@ -87,7 +88,7 @@ func (c *OrgAndUserInput) Create() error {
 
 	if err := tx.Create(&org).Error; err != nil {
 		tx.Rollback()
-		return err
+		return OrgExtend{}, err
 	}
 
 	user := user.User{
@@ -103,12 +104,18 @@ func (c *OrgAndUserInput) Create() error {
 		CreatedAt: time.Now(),
 	}
 
-	if err := tx.Create(&user).Error; err != nil {
+	if ok := user.CheckEmailAndPhoneNotExist(); !ok {
 		tx.Rollback()
-		return err
+		return OrgExtend{}, fmt.Errorf("email or phone already exist")
 	}
 
-	return tx.Commit().Error
+	if err := tx.Create(&user).Error; err != nil {
+		tx.Rollback()
+		return OrgExtend{}, err
+	}
+
+	org.User = user
+	return org, tx.Commit().Error
 
 }
 
@@ -130,6 +137,11 @@ type OrgExtend struct {
 
 func (c *OrgExtend) TableName() string {
 	return "org"
+}
+
+func (c *OrgExtend) Get() error {
+
+	return config.DB.Where("id = ?", c.ID).Preload(clause.Associations).First(c).Error
 }
 
 func (c *OrgExtend) GetList(offset int, limit int, order string, sort string) ([]OrgExtend, error) {
