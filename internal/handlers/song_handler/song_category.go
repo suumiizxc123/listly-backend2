@@ -57,7 +57,7 @@ func GetSongCategoryList(c *gin.Context) {
 
 func GetSongCategory(c *gin.Context) {
 
-	var songCategory song.SongCategory
+	var songCategory song.SongCategorySong
 	var err error
 	id, ok := c.GetQuery("id")
 

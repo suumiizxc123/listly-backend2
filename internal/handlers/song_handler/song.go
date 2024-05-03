@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 func CreateSong(c *gin.Context) {
@@ -20,6 +21,8 @@ func CreateSong(c *gin.Context) {
 		)
 		return
 	}
+
+	song.UUID = uuid.New().String()
 
 	if err = song.Create(); err != nil {
 		c.JSON(
@@ -59,7 +62,7 @@ func UpdateSong(c *gin.Context) {
 
 func GetSong(c *gin.Context) {
 
-	var song song.Song
+	var song song.SongExtend
 	var err error
 	id, ok := c.GetQuery("id")
 
@@ -137,11 +140,11 @@ func DeleteSong(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, utils.Success("Song deleted", song))
+	c.JSON(200, utils.Success("Song deleted", struct{}{}))
 }
 
 func GetSongList(c *gin.Context) {
-	var song song.Song
+	var song song.SongExtend
 
 	songs, err := song.GetList()
 
