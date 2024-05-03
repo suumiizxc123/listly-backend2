@@ -1,0 +1,11 @@
+docker stack rm kcloudstack
+
+docker build -t kcloudimage . 
+
+docker stack deploy -c docker-compose.yml kcloudstack
+
+docker stack ps kcloudstack
+
+docker stack services kcloudstack_app
+
+docker service scale kcloudstack_app=5
