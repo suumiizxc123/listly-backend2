@@ -17,7 +17,7 @@ func CreateSongCategoryCombination(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Song category combination fields required", err),
+			utils.Error([]string{"Song category combination fields required", "Дууны төрлийн холбоос мэдээлэл дутуу"}, err),
 		)
 
 		return
@@ -27,13 +27,13 @@ func CreateSongCategoryCombination(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Song category combination creation failed", err),
+			utils.Error([]string{"Song category combination creation failed", "Дууны төрлийн холбоос мэдээлэл нэмэхад алдаа гарлаа"}, err),
 		)
 
 		return
 	}
 
-	c.JSON(http.StatusCreated, utils.Success("Song category combination created", songCategoryCombination))
+	c.JSON(http.StatusCreated, utils.Success([]string{"Song category combination created", "Дууны төрлийн холбоос мэдээлэл нэмэгдлээ"}, songCategoryCombination))
 
 }
 
@@ -47,13 +47,13 @@ func GetSongCategoryCombinationList(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Song category combination list retrieval failed", err),
+			utils.Error([]string{"Song category combination list retrieval failed", "Дууны төрлийн холбоос мэдээлэл жагсаалт авахад алдаа гарлаа"}, err),
 		)
 
 		return
 	}
 
-	c.JSON(200, utils.Success("Song category combination list", songCategoryCombinations))
+	c.JSON(200, utils.Success([]string{"Song category combination list", "Дууны төрлийн холбоос мэдээлэл жагсаалт"}, songCategoryCombinations))
 }
 
 func GetSongCategoryCombination(c *gin.Context) {
@@ -66,7 +66,7 @@ func GetSongCategoryCombination(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Song category combination id required", "id must be required"),
+			utils.Error([]string{"Song category combination id required", "Дууны төрлийн холбоос id мэдээлэл дутуу"}, "id must be required"),
 		)
 
 		return
@@ -78,7 +78,7 @@ func GetSongCategoryCombination(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Song category combination id cannot be parsed", err.Error()),
+			utils.Error([]string{"Song category combination id cannot be parsed", "Дууны төрлийн холбоос id буруу байна"}, err.Error()),
 		)
 
 		return
@@ -88,13 +88,13 @@ func GetSongCategoryCombination(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Song category combination retrieval failed", err),
+			utils.Error([]string{"Song category combination retrieval failed", "Дууны төрлийн холбоос мэдээлэл авахад алдаа гарлаа"}, err),
 		)
 
 		return
 	}
 
-	c.JSON(200, utils.Success("Song category combination", songCategoryCombination))
+	c.JSON(200, utils.Success([]string{"Song category combination", "Дууны төрлийн холбоос мэдээлэл татлаа"}, songCategoryCombination))
 
 }
 
@@ -106,7 +106,7 @@ func UpdateSongCategoryCombination(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Song category combination fields required", err),
+			utils.Error([]string{"Song category combination fields required", "Дууны төрлийн холбоос мэдээлэл дутуу"}, err),
 		)
 
 		return
@@ -116,13 +116,13 @@ func UpdateSongCategoryCombination(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Song category combination update failed", err),
+			utils.Error([]string{"Song category combination update failed", "Дууны төрлийн холбоос мэдээлэл нэмэхад алдаа гарлаа"}, err),
 		)
 
 		return
 	}
 
-	c.JSON(200, utils.Success("Song category combination updated", songCategoryCombination))
+	c.JSON(200, utils.Success([]string{"Song category combination updated", "Дууны төрлийн холбоос мэдээлэл нэмэгдлээ"}, songCategoryCombination))
 }
 
 func DeleteSongCategoryCombination(c *gin.Context) {
@@ -135,7 +135,7 @@ func DeleteSongCategoryCombination(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Song category combination id required", "id must be required"),
+			utils.Error([]string{"Song category combination id required", "Дууны төрлийн холбоос id мэдээлэл дутуу"}, "id must be required"),
 		)
 
 		return
@@ -147,7 +147,7 @@ func DeleteSongCategoryCombination(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Song category combination id cannot be parsed", err.Error()),
+			utils.Error([]string{"Song category combination id cannot be parsed", "Дууны төрлийн холбоос id буруу байна"}, err.Error()),
 		)
 
 		return
@@ -157,11 +157,11 @@ func DeleteSongCategoryCombination(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Song category combination delete failed", err),
+			utils.Error([]string{"Song category combination deletion failed", "Дууны төрлийн холбоос мэдээлэл устгахад алдаа гарлаа"}, err),
 		)
 
 		return
 	}
 
-	c.JSON(200, utils.Success("Song category combination deleted", songCategoryCombination))
+	c.JSON(200, utils.Success([]string{"Song category combination deleted", "Дууны төрлийн холбоос мэдээлэл устгагдлаа"}, songCategoryCombination))
 }

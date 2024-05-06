@@ -17,7 +17,7 @@ func CreateSongCategory(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Song category fields required", err),
+			utils.Error([]string{"Song category fields required", "Дууны төрлийн мэдээлэл дутуу байна"}, err),
 		)
 
 		return
@@ -27,13 +27,13 @@ func CreateSongCategory(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Song category creation failed", err),
+			utils.Error([]string{"Song category creation failed", "Дууны төрлийн мэдээлэл хадгалахад алдаа үүслээ"}, err),
 		)
 
 		return
 	}
 
-	c.JSON(http.StatusCreated, utils.Success("Song category created", songCategory))
+	c.JSON(http.StatusCreated, utils.Success([]string{"Song category created", "Дууны төрлийн мэдээлэл хадгаллаа"}, songCategory))
 }
 
 func GetSongCategoryList(c *gin.Context) {
@@ -46,13 +46,13 @@ func GetSongCategoryList(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Song category list not found", err.Error()),
+			utils.Error([]string{"Song category list not found", "Дууны төрлийн мэдээлэл татахад үүслээ"}, err.Error()),
 		)
 
 		return
 	}
 
-	c.JSON(200, utils.Success("Song category list", songCategories))
+	c.JSON(200, utils.Success([]string{"Song category list", "Дууны төрлийн мэдээлэл татлаа"}, songCategories))
 }
 
 func GetSongCategory(c *gin.Context) {
@@ -65,7 +65,7 @@ func GetSongCategory(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Song category id required", "id must be required"),
+			utils.Error([]string{"Song category id required", "Дууны төрлийн холбоос id мэдээлэл дутуу"}, "id must be required"),
 		)
 
 		return
@@ -78,7 +78,7 @@ func GetSongCategory(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Song category id cannot be parsed", err.Error()),
+			utils.Error([]string{"Song category id cannot be parsed", "Дууны төрлийн холбоос id буруу байна"}, err.Error()),
 		)
 
 		return
@@ -88,13 +88,13 @@ func GetSongCategory(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Song category not found", err.Error()),
+			utils.Error([]string{"Song category not found", "Дууны төрлийн мэдээлэл буруу байна"}, err.Error()),
 		)
 
 		return
 	}
 
-	c.JSON(200, utils.Success("Song category", songCategory))
+	c.JSON(200, utils.Success([]string{"Song category", "Дууны төрлийн мэдээлэл амжилттай татлаа"}, songCategory))
 
 }
 
@@ -107,7 +107,7 @@ func UpdateSongCategory(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Song category fields required", err.Error()),
+			utils.Error([]string{"Song category fields required", "Дууны төрлийн мэдээлэл дутуу байна"}, err.Error()),
 		)
 
 		return
@@ -117,13 +117,13 @@ func UpdateSongCategory(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Song category update failed", err.Error()),
+			utils.Error([]string{"Song category update failed", "Дууны төрлийн мэдээлэл хадгалахад алдаа үүслээ"}, err.Error()),
 		)
 
 		return
 	}
 
-	c.JSON(200, utils.Success("Song category updated", songCategory))
+	c.JSON(200, utils.Success([]string{"Song category updated", "Дууны төрлийн мэдээлэл хадгаллаа"}, songCategory))
 
 }
 
@@ -138,7 +138,7 @@ func DeleteSongCategory(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Song category id required", "id must be required"),
+			utils.Error([]string{"Song category id required", "Дууны төрлийн холбоос id мэдээлэл дутуу"}, "id must be required"),
 		)
 		return
 	}
@@ -149,7 +149,7 @@ func DeleteSongCategory(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Song category id cannot be parsed", err.Error()),
+			utils.Error([]string{"Song category id cannot be parsed", "Дууны төрлийн холбоос id буруу байна"}, err.Error()),
 		)
 
 		return
@@ -159,11 +159,11 @@ func DeleteSongCategory(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Song category delete failed", err.Error()),
+			utils.Error([]string{"Song category delete failed", "Дууны төрлийн мэдээлэл хадгалахад алдаа үүслээ"}, err.Error()),
 		)
 
 		return
 	}
 
-	c.JSON(200, utils.Success("Song category deleted", songCategory))
+	c.JSON(200, utils.Success([]string{"Song category deleted", "Дууны төрлийн мэдээлэл хадгаллаа"}, songCategory))
 }

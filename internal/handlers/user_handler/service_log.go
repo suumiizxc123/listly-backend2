@@ -16,7 +16,7 @@ func CreateServiceLog(c *gin.Context) {
 	if err = c.ShouldBindJSON(&log); err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Service log fields required", err.Error()),
+			utils.Error([]string{"Service log fields required", "Системийн лог мэдээлэл дутуу байна"}, err.Error()),
 		)
 		return
 	}
@@ -24,12 +24,12 @@ func CreateServiceLog(c *gin.Context) {
 	if err = log.Create(); err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Service log creation failed", err.Error()),
+			utils.Error([]string{"Service log creation failed", "Системийн лог мэдээлэл хадгалахад алдаа үүслээ"}, err.Error()),
 		)
 		return
 	}
 
-	c.JSON(200, utils.Success("Service log created", log))
+	c.JSON(200, utils.Success([]string{"Service log created", "Системийн лог мэдээлэл хадгаллаа"}, log))
 }
 
 func GetServiceLogList(c *gin.Context) {
@@ -41,12 +41,12 @@ func GetServiceLogList(c *gin.Context) {
 	if err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Service log list not found", err.Error()),
+			utils.Error([]string{"Service log list not found", "Системийн лог лист байхгүй байна"}, err.Error()),
 		)
 		return
 	}
 
-	c.JSON(200, utils.Success("Service log list", logs))
+	c.JSON(200, utils.Success([]string{"Service log list", "Системийн лог лист татлаа"}, logs))
 }
 
 func UpdateServiceLog(c *gin.Context) {
@@ -56,7 +56,7 @@ func UpdateServiceLog(c *gin.Context) {
 	if err = c.ShouldBindJSON(&log); err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Service log fields required", err.Error()),
+			utils.Error([]string{"Service log fields required", "Системийн лог мэдээлэл дутуу байна"}, err.Error()),
 		)
 		return
 	}
@@ -64,12 +64,12 @@ func UpdateServiceLog(c *gin.Context) {
 	if err = log.Update(); err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Service log update failed", err.Error()),
+			utils.Error([]string{"Service log update failed", "Системийн лог мэдээлэл хадгалахад алдаа үүслээ"}, err.Error()),
 		)
 		return
 	}
 
-	c.JSON(200, utils.Success("Service log updated", log))
+	c.JSON(200, utils.Success([]string{"Service log updated", "Системийн лог мэдээлэл хадгаллаа"}, log))
 }
 
 func DeleteServiceLog(c *gin.Context) {
@@ -81,7 +81,7 @@ func DeleteServiceLog(c *gin.Context) {
 	if !ok {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Service log id required", "id must be required"),
+			utils.Error([]string{"Service log id required", "Системийн лог мэдээлэл дутуу байна"}, "id must be required"),
 		)
 		return
 	}
@@ -91,7 +91,7 @@ func DeleteServiceLog(c *gin.Context) {
 	if err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Service log id cannot be parsed", err.Error()),
+			utils.Error([]string{"Service log id cannot be parsed", "Системийн лог мэдээлэл буруу байна"}, err.Error()),
 		)
 		return
 	}
@@ -99,10 +99,10 @@ func DeleteServiceLog(c *gin.Context) {
 	if err = log.Delete(); err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Service log delete failed", err.Error()),
+			utils.Error([]string{"Service log delete failed", "Системийн лог мэдээлэл устгахад алдаа үүслээ"}, err.Error()),
 		)
 		return
 	}
 
-	c.JSON(200, utils.Success("Service log deleted", struct{}{}))
+	c.JSON(200, utils.Success([]string{"Service log deleted", "Системийн лог мэдээлэл устгалаа"}, struct{}{}))
 }

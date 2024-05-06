@@ -15,7 +15,7 @@ func CreateArtistSong(c *gin.Context) {
 	if err := c.ShouldBindJSON(&artistSong); err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Artist song fields required", err),
+			utils.Error([]string{"Artist song fields required", "Артист дууны мэдээлэл дутуу байна"}, err),
 		)
 		return
 	}
@@ -23,12 +23,12 @@ func CreateArtistSong(c *gin.Context) {
 	if err := artistSong.Create(); err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Artist song creation failed", err),
+			utils.Error([]string{"Artist song creation failed", "Артист дууг хадгалахад алдаа үүслээ"}, err),
 		)
 		return
 	}
 
-	c.JSON(http.StatusCreated, utils.Success("Artist song created", artistSong))
+	c.JSON(http.StatusCreated, utils.Success([]string{"Artist song created", "Артист дууг хадгаллаа"}, artistSong))
 }
 
 func GetArtistSongList(c *gin.Context) {
@@ -40,12 +40,12 @@ func GetArtistSongList(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Artist song list not found", err.Error()),
+			utils.Error([]string{"Artist song list not found", "Артист дуугуудын жагсаалт олдсонгүй"}, err.Error()),
 		)
 		return
 	}
 
-	c.JSON(200, utils.Success("Artist song list", list))
+	c.JSON(200, utils.Success([]string{"Artist song list", "Артист дуугуудын жагсаалт татлаа"}, list))
 }
 
 func UpdateArtistSong(c *gin.Context) {
@@ -55,7 +55,7 @@ func UpdateArtistSong(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Artist song fields required", err),
+			utils.Error([]string{"Artist song fields required", "Артист дууны мэдээлэл дутуу байна"}, err),
 		)
 		return
 	}
@@ -64,12 +64,12 @@ func UpdateArtistSong(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Artist song update failed", err),
+			utils.Error([]string{"Artist song update failed", "Артист дууг хадгалахад алдаа үүслээ"}, err),
 		)
 		return
 	}
 
-	c.JSON(200, utils.Success("Artist song updated", artistSong))
+	c.JSON(200, utils.Success([]string{"Artist song updated", "Артист дууг хадгаллаа"}, artistSong))
 }
 
 func DeleteArtistSong(c *gin.Context) {
@@ -81,7 +81,7 @@ func DeleteArtistSong(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Artist song id required", nil),
+			utils.Error([]string{"Artist song id required", "Артист дууны id бөглөнө үү"}, nil),
 		)
 		return
 	}
@@ -92,7 +92,7 @@ func DeleteArtistSong(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Artist song id cannot be parsed", err),
+			utils.Error([]string{"Artist song id cannot be parsed", "Артист дууны id буруу байна"}, err),
 		)
 		return
 	}
@@ -101,12 +101,12 @@ func DeleteArtistSong(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Artist song delete failed", err),
+			utils.Error([]string{"Artist song delete failed", "Артист дууг устгаж чадсангүй"}, err),
 		)
 		return
 	}
 
-	c.JSON(200, utils.Success("Artist song deleted", artistSong))
+	c.JSON(200, utils.Success([]string{"Artist song deleted", "Артист дууг устгалаа"}, artistSong))
 }
 
 func GetArtistSong(c *gin.Context) {
@@ -118,7 +118,7 @@ func GetArtistSong(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Artist song id required", nil),
+			utils.Error([]string{"Artist song id required", "Артист дууны id бөглөнө үү"}, nil),
 		)
 		return
 	}
@@ -129,7 +129,7 @@ func GetArtistSong(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Artist song id cannot be parsed", err),
+			utils.Error([]string{"Artist song id cannot be parsed", "Артист дууны id буруу байна"}, err),
 		)
 		return
 	}
@@ -138,10 +138,10 @@ func GetArtistSong(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Artist song not found", err),
+			utils.Error([]string{"Artist song not found", "Артист дууг олсонгүй"}, err),
 		)
 		return
 	}
 
-	c.JSON(200, utils.Success("Artist song", artistSong))
+	c.JSON(200, utils.Success([]string{"Artist song", "Артист дууг татлаа"}, artistSong))
 }

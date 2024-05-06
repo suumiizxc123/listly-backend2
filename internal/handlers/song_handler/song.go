@@ -17,7 +17,7 @@ func CreateSong(c *gin.Context) {
 	if err := c.ShouldBindJSON(&song); err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Song fields required", err),
+			utils.Error([]string{"Song fields required", "Дууны мэдээлэл дутуу байна"}, err),
 		)
 		return
 	}
@@ -27,14 +27,15 @@ func CreateSong(c *gin.Context) {
 	if err = song.Create(); err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Song creation failed", err),
+			utils.Error([]string{"Song creation failed", "Дууны мэдээлэл хадгалахад алдаа үүслээ"}, err),
 		)
 		return
 	}
 
-	c.JSON(http.StatusCreated, utils.Success("Song created", song))
+	c.JSON(http.StatusCreated, utils.Success([]string{"Song created", "Дууны мэдээлэл хадгаллаа"}, song))
 }
 
+// bayaraa number 99267774
 func UpdateSong(c *gin.Context) {
 	var song song.Song
 	var err error
@@ -43,7 +44,7 @@ func UpdateSong(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Song fields required", err),
+			utils.Error([]string{"Song fields required", "Дууны мэдээлэл дутуу байна"}, err),
 		)
 		return
 	}
@@ -51,12 +52,12 @@ func UpdateSong(c *gin.Context) {
 	if err = song.Update(); err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Song update failed", err),
+			utils.Error([]string{"Song update failed", "Дууны мэдээлэл хадгалахад алдаа үүслээ"}, err),
 		)
 		return
 	}
 
-	c.JSON(200, utils.Success("Song updated", song))
+	c.JSON(200, utils.Success([]string{"Song updated", "Дууны мэдээлэл хадгаллаа"}, song))
 
 }
 
@@ -70,7 +71,7 @@ func GetSong(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Song id required", "id must be required"),
+			utils.Error([]string{"Song id required", "Дууны id мэдээлэл дутуу байна"}, "id must be required"),
 		)
 
 		return
@@ -82,7 +83,7 @@ func GetSong(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Song id cannot be parsed", err.Error()),
+			utils.Error([]string{"Song id cannot be parsed", "Дууны id буруу байна"}, err.Error()),
 		)
 
 		return
@@ -92,13 +93,13 @@ func GetSong(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Song not found", err.Error()),
+			utils.Error([]string{"Song not found", "Дуу олдсонгүй"}, err.Error()),
 		)
 
 		return
 	}
 
-	c.JSON(200, utils.Success("Song found", song))
+	c.JSON(200, utils.Success([]string{"Song found", "Дууны мэдээлэл олдлоо"}, song))
 }
 
 func DeleteSong(c *gin.Context) {
@@ -112,7 +113,7 @@ func DeleteSong(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Song id required", "id must be required"),
+			utils.Error([]string{"Song id required", "Дууны id мэдээлэл дутуу байна"}, "id must be required"),
 		)
 
 		return
@@ -124,7 +125,7 @@ func DeleteSong(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Song id cannot be parsed", err.Error()),
+			utils.Error([]string{"Song id cannot be parsed", "Дууны id буруу байна"}, err.Error()),
 		)
 
 		return
@@ -134,13 +135,13 @@ func DeleteSong(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Song deletion failed", err.Error()),
+			utils.Error([]string{"Song delete failed", "Дуу устгаж чадсангүй"}, err.Error()),
 		)
 
 		return
 	}
 
-	c.JSON(200, utils.Success("Song deleted", struct{}{}))
+	c.JSON(200, utils.Success([]string{"Song deleted", "Дууны мэдээлэл устгагдлаа"}, struct{}{}))
 }
 
 func GetSongList(c *gin.Context) {
@@ -152,11 +153,11 @@ func GetSongList(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Song list not found", err.Error()),
+			utils.Error([]string{"Song list not found", "Дуу олдсонгүй"}, err.Error()),
 		)
 
 		return
 	}
 
-	c.JSON(200, utils.Success("Song list", songs))
+	c.JSON(200, utils.Success([]string{"Song list", "Дууны жагсаалт"}, songs))
 }

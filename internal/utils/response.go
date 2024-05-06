@@ -1,29 +1,43 @@
 package utils
 
+type Message struct {
+	English   string `json:"english"`
+	Mongolian string `json:"mongolian"`
+	Chinese   string `json:"chinese"`
+}
+
 type Response struct {
 	Status  bool        `json:"status"`
-	Message string      `json:"message"`
+	Message Message     `json:"message"`
 	Errors  interface{} `json:"errors"`
 	Data    interface{} `json:"data"`
 }
 
-func Success(message string, data interface{}) Response {
+func Success(message []string, data interface{}) Response {
 
 	return Response{
-		Status:  true,
-		Message: message,
-		Errors:  nil,
-		Data:    data,
+		Status: true,
+		Message: Message{
+			English:   message[0],
+			Mongolian: message[1],
+			Chinese:   "",
+		},
+		Errors: nil,
+		Data:   data,
 	}
 }
 
-func Error(message string, errors interface{}) Response {
+func Error(message []string, errors interface{}) Response {
 
 	return Response{
-		Status:  false,
-		Message: message,
-		Errors:  errors,
-		Data:    nil,
+		Status: false,
+		Message: Message{
+			English:   message[0],
+			Mongolian: message[1],
+			Chinese:   "",
+		},
+		Errors: errors,
+		Data:   nil,
 	}
 
 }

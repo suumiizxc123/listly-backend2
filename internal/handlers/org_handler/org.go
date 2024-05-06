@@ -18,7 +18,7 @@ func CreateOrg(c *gin.Context) {
 	if err := c.ShouldBindJSON(&org); err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Org fields required", err),
+			utils.Error([]string{"Org fields required", "Байгууллагын мэдээлэл дутуу байна"}, err),
 		)
 		return
 	}
@@ -29,14 +29,14 @@ func CreateOrg(c *gin.Context) {
 	if err = org.Create(); err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Org creation failed", err),
+			utils.Error([]string{"Org creation failed", "Байгууллага бүртгэхэд алдаа гарлаа"}, err),
 		)
 		return
 	}
 
 	c.JSON(
 		http.StatusCreated,
-		utils.Success("Org created", org),
+		utils.Success([]string{"Org created", "Байгууллага бүртгэгдлээ"}, org),
 	)
 }
 
@@ -47,7 +47,7 @@ func UpdateOrg(c *gin.Context) {
 	if err := c.ShouldBindJSON(&org); err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Org fields required", err),
+			utils.Error([]string{"Org fields required", "Байгууллагын мэдээлэл дутуу байна"}, err),
 		)
 		return
 	}
@@ -56,14 +56,14 @@ func UpdateOrg(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Org update failed", err),
+			utils.Error([]string{"Org update failed", "Байгууллага бүртгэхэд алдаа гарлаа"}, err),
 		)
 		return
 	}
 
 	c.JSON(
 		200,
-		utils.Success("Org updated", org),
+		utils.Success([]string{"Org updated", "Байгууллага бүртгэгдлээ"}, org),
 	)
 }
 
@@ -76,7 +76,7 @@ func DeleteOrg(c *gin.Context) {
 	if !ok {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Org id required", err),
+			utils.Error([]string{"Org id required", "Байгууллагын id дутуу байна"}, err),
 		)
 		return
 	}
@@ -86,7 +86,7 @@ func DeleteOrg(c *gin.Context) {
 	if err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Org id cannot be parsed", err),
+			utils.Error([]string{"Org id cannot be parsed", "Байгууллагын id буруу байна"}, err),
 		)
 		return
 	}
@@ -94,14 +94,14 @@ func DeleteOrg(c *gin.Context) {
 	if err = org.Delete(); err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Org deletion failed", err),
+			utils.Error([]string{"Org deletion failed", "Байгууллага устгахад алдаа гарлаа"}, err),
 		)
 		return
 	}
 
 	c.JSON(
 		200,
-		utils.Success("Org deleted", struct{}{}),
+		utils.Success([]string{"Org deleted", "Байгууллага устгагдлаа"}, struct{}{}),
 	)
 
 }
@@ -115,7 +115,7 @@ func GetOrg(c *gin.Context) {
 	if !ok {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Org id required", err),
+			utils.Error([]string{"Org id required", "Байгууллагын id дутуу байна"}, err),
 		)
 		return
 	}
@@ -125,7 +125,7 @@ func GetOrg(c *gin.Context) {
 	if err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Org id cannot be parsed", err),
+			utils.Error([]string{"Org id cannot be parsed", "Байгууллагын id буруу байна"}, err),
 		)
 		return
 	}
@@ -133,14 +133,14 @@ func GetOrg(c *gin.Context) {
 	if err = org.Get(); err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Org not found", err),
+			utils.Error([]string{"Org not found", "Байгууллага буруу байна"}, err),
 		)
 		return
 	}
 
 	c.JSON(
 		200,
-		utils.Success("Org found", org),
+		utils.Success([]string{"Org found", "Байгууллага бүртгэгдлээ"}, org),
 	)
 
 }
@@ -161,14 +161,14 @@ func GetOrgList(c *gin.Context) {
 	if err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Org list not found", err),
+			utils.Error([]string{"Org list not found", "Байгууллагын жагсаалт буруу байна"}, err),
 		)
 		return
 	}
 
 	c.JSON(
 		200,
-		utils.Success("Org list", orgs),
+		utils.Success([]string{"Org list", "Байгууллагын жагсаалт"}, orgs),
 	)
 }
 
@@ -181,7 +181,7 @@ func GetOrgListUser(c *gin.Context) {
 	if !ok {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("User id required", nil),
+			utils.Error([]string{"User id required", "Хэрэглэгч id дутуу байна"}, nil),
 		)
 		return
 	}
@@ -192,7 +192,7 @@ func GetOrgListUser(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("User id cannot be parsed", err),
+			utils.Error([]string{"User id cannot be parsed", "Хэрэглэгч id буруу байна"}, err),
 		)
 		return
 	}
@@ -203,7 +203,7 @@ func GetOrgListUser(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("User not found", err),
+			utils.Error([]string{"User not found", "Хэрэглэгч буруу байна"}, err),
 		)
 		return
 	}
@@ -215,7 +215,7 @@ func GetOrgListUser(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Org not found", err),
+			utils.Error([]string{"Org not found", "Байгууллага буруу байна"}, err),
 		)
 		return
 
@@ -223,7 +223,7 @@ func GetOrgListUser(c *gin.Context) {
 
 	c.JSON(
 		200,
-		utils.Success("Org found", org),
+		utils.Success([]string{"Org found", "Байгууллага олдлоо"}, org),
 	)
 
 }
@@ -234,7 +234,7 @@ func CreateOrgAndUser(c *gin.Context) {
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Org and user fields required", err),
+			utils.Error([]string{"Org and user fields required", "Байгууллагын мэдээлэл дутуу байна"}, err),
 		)
 		return
 	}
@@ -243,10 +243,10 @@ func CreateOrgAndUser(c *gin.Context) {
 	if err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Org and user creation failed or email or phone already exist in user", err),
+			utils.Error([]string{"Org and user creation failed or email or phone already exist in user", "Байгууллага бүртгэхэд алдаа гарлаа. Утасны дугаар аль эсвэл имейл хаяг бүртгэлтэй байна"}, err),
 		)
 		return
 	}
 
-	c.JSON(200, utils.Success("Org and user created", orgc))
+	c.JSON(200, utils.Success([]string{"Org and user created", "Байгууллага бүртгэгдлээ"}, orgc))
 }

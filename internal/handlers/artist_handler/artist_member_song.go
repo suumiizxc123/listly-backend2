@@ -15,7 +15,7 @@ func CreateArtistMemberSong(c *gin.Context) {
 	if err := c.ShouldBindJSON(&artistMemberSong); err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Artist member song fields required", err),
+			utils.Error([]string{"Artist member song fields required", "Артист групийн дууны мэдээлэл бүрэн хангагдаагүй байна"}, err),
 		)
 		return
 	}
@@ -23,12 +23,12 @@ func CreateArtistMemberSong(c *gin.Context) {
 	if err := artistMemberSong.Create(); err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Artist member song creation failed", err),
+			utils.Error([]string{"Artist member song creation failed", "Артист групийн дууг хадгалахад алдаа үүслээ"}, err),
 		)
 		return
 	}
 
-	c.JSON(http.StatusCreated, utils.Success("Artist member song created", artistMemberSong))
+	c.JSON(http.StatusCreated, utils.Success([]string{"Artist member song created", "Артист групийн дууны мэдээлэл амжилттай хадгаллаа"}, artistMemberSong))
 }
 
 func GetArtistMemberSongList(c *gin.Context) {
@@ -41,13 +41,13 @@ func GetArtistMemberSongList(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Artist member song list failed", err),
+			utils.Error([]string{"Artist member song list failed", "Артист групийн дууны мэдээлэл жагсаалт авахад алдаа гарлаа"}, err),
 		)
 
 		return
 	}
 
-	c.JSON(200, utils.Success("Artist member song list", list))
+	c.JSON(200, utils.Success([]string{"Artist member song list", "Артист групийн дууны мэдээлэл жагсаалт авлаа"}, list))
 }
 
 func UpdateArtistMemberSong(c *gin.Context) {
@@ -56,7 +56,7 @@ func UpdateArtistMemberSong(c *gin.Context) {
 	if err := c.ShouldBindJSON(&artistMemberSong); err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Artist member song fields required", err),
+			utils.Error([]string{"Artist member song fields required", "Артист групийн дууны мэдээлэл бүрэн хангагдаагүй байна"}, err),
 		)
 		return
 	}
@@ -64,12 +64,12 @@ func UpdateArtistMemberSong(c *gin.Context) {
 	if err := artistMemberSong.Update(); err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Artist member song update failed", err),
+			utils.Error([]string{"Artist member song update failed", "Артист групийн дууг хадгалахад алдаа үүслээ"}, err),
 		)
 		return
 	}
 
-	c.JSON(200, utils.Success("Artist member song updated", artistMemberSong))
+	c.JSON(200, utils.Success([]string{"Artist member song updated", "Артист групийн дууны мэдээлэл амжилттай хадгаллаа"}, artistMemberSong))
 }
 
 func DeleteArtistMemberSong(c *gin.Context) {
@@ -81,7 +81,7 @@ func DeleteArtistMemberSong(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Artist member song id required", nil),
+			utils.Error([]string{"Artist member song id required", "Артист групийн дууны id шаардлагатай байна"}, nil),
 		)
 		return
 	}
@@ -92,7 +92,7 @@ func DeleteArtistMemberSong(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Artist member song id cannot be parsed", err),
+			utils.Error([]string{"Artist member song id cannot be parsed", "Артист групийн дууны id таарахгүй байна"}, err),
 		)
 
 		return
@@ -102,11 +102,11 @@ func DeleteArtistMemberSong(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Artist member song delete failed", err),
+			utils.Error([]string{"Artist member song deletion failed", "Артист групийн дууг устгахад алдаа үүслээ"}, err),
 		)
 
 		return
 	}
 
-	c.JSON(200, utils.Success("Artist member song deleted", artistMemberSong))
+	c.JSON(200, utils.Success([]string{"Artist member song deleted", "Артист групийн дууны мэдээлэл амжилттай устгалаа"}, artistMemberSong))
 }

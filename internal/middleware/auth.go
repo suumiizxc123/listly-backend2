@@ -17,7 +17,7 @@ func AuthSysUser() gin.HandlerFunc {
 
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, utils.Error(
-				"Unauthorized",
+				[]string{"Unauthorized", "Хэрэглэгч нэвтрээгүй байна"},
 				err.Error(),
 			))
 			c.Abort()
@@ -30,7 +30,7 @@ func AuthSysUser() gin.HandlerFunc {
 		if err := json.Unmarshal([]byte(objToken), &sysUser); err != nil {
 
 			c.JSON(http.StatusUnauthorized, utils.Error(
-				"Unauthorized",
+				[]string{"Unauthorized", "Хэрэглэгч нэвтрээгүй байна"},
 				err.Error(),
 			))
 			c.Abort()
@@ -40,7 +40,7 @@ func AuthSysUser() gin.HandlerFunc {
 		if err := config.DB.Find(&sysUserDB, "id = ?", sysUser.ID).Error; err != nil {
 
 			c.JSON(http.StatusUnauthorized, utils.Error(
-				"Unauthorized",
+				[]string{"Unauthorized", "Хэрэглэгч нэвтрээгүй байна"},
 				err.Error(),
 			))
 			c.Abort()
@@ -49,7 +49,7 @@ func AuthSysUser() gin.HandlerFunc {
 
 		if sysUserDB.ID == 0 && sysUserDB.UID != sysUser.UID {
 			c.JSON(http.StatusForbidden, utils.Error(
-				"Forbidden",
+				[]string{"Forbidden", "Хэрэглэгч нэвтрэх эрхгүй байна"},
 				"Forbidden",
 			))
 
@@ -70,7 +70,7 @@ func AuthUser() gin.HandlerFunc {
 		if err != nil {
 			c.JSON(http.StatusUnauthorized,
 				utils.Error(
-					"Unauthorized",
+					[]string{"Unauthorized", "Хэрэглэгч нэвтрээгүй байна"},
 					err.Error(),
 				))
 
@@ -85,7 +85,7 @@ func AuthUser() gin.HandlerFunc {
 
 			c.JSON(http.StatusUnauthorized,
 				utils.Error(
-					"Unauthorized",
+					[]string{"Unauthorized", "Хэрэглэгч нэвтрээгүй байна"},
 					err.Error(),
 				))
 			c.Abort()
@@ -96,7 +96,7 @@ func AuthUser() gin.HandlerFunc {
 
 			c.JSON(http.StatusUnauthorized,
 				utils.Error(
-					"Unauthorized",
+					[]string{"Unauthorized", "Хэрэглэгч нэвтрээгүй байна"},
 					err.Error(),
 				))
 
@@ -108,7 +108,7 @@ func AuthUser() gin.HandlerFunc {
 
 			c.JSON(http.StatusForbidden,
 				utils.Error(
-					"Forbidden",
+					[]string{"Forbidden", "Хэрэглэгч нэвтрэх эрхгүй байна"},
 					"Forbidden",
 				))
 			c.Abort()

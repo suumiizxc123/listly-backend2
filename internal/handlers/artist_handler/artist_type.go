@@ -15,7 +15,7 @@ func CreateArtistType(c *gin.Context) {
 	if err := c.ShouldBindJSON(&artisType); err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Artist type fields required", err),
+			utils.Error([]string{"Artist type fields required", "Артист төрлийн талбарыг бөглөнө үү"}, err),
 		)
 		return
 	}
@@ -23,12 +23,12 @@ func CreateArtistType(c *gin.Context) {
 	if err := artisType.Create(); err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Artist type creation failed", err),
+			utils.Error([]string{"Artist type creation failed", "Артист төрлийн бүртгэхэд алдаа гарлаа"}, err),
 		)
 		return
 	}
 
-	c.JSON(http.StatusCreated, utils.Success("Artist type created", artisType))
+	c.JSON(http.StatusCreated, utils.Success([]string{"Artist type created", "Артист төрлийн бүртгэгдлүүд амжилттай боллоо"}, artisType))
 }
 
 func GetArtistTypeList(c *gin.Context) {
@@ -39,12 +39,12 @@ func GetArtistTypeList(c *gin.Context) {
 	if err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Artist type list failed", err),
+			utils.Error([]string{"Artist type list failed", "Артист төрлийн жагсаалт авахад алдаа гарлаа"}, err),
 		)
 		return
 	}
 
-	c.JSON(200, utils.Success("Artist type list", list))
+	c.JSON(200, utils.Success([]string{"Artist type list", "Артист төрлийн жагсаалт амжилттай боллоо"}, list))
 }
 
 func GetArtistTypeListByType(c *gin.Context) {
@@ -56,7 +56,7 @@ func GetArtistTypeListByType(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Artist type type required", nil),
+			utils.Error([]string{"Artist type type required", "Артист төрлийн төрөл бөглөнө үү"}, nil),
 		)
 		return
 	}
@@ -69,12 +69,12 @@ func GetArtistTypeListByType(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Artist type list failed", err),
+			utils.Error([]string{"Artist type list failed", "Артист төрлийн жагсаалт авахад алдаа гарлаа"}, err),
 		)
 		return
 	}
 
-	c.JSON(200, utils.Success("Artist type list", list))
+	c.JSON(200, utils.Success([]string{"Artist type list", "Артист төрлийн жагсаалт амжилттай боллоо"}, list))
 }
 
 func GetArtistType(c *gin.Context) {
@@ -87,7 +87,7 @@ func GetArtistType(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Artist type id required", nil),
+			utils.Error([]string{"Artist type id required", "Артист төрлийн ID бөглөнө үү"}, nil),
 		)
 
 		return
@@ -99,7 +99,7 @@ func GetArtistType(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Artist type id cannot be parsed", err),
+			utils.Error([]string{"Artist type id required", "Артист төрлийн ID бөглөнө үү"}, err),
 		)
 
 		return
@@ -109,13 +109,13 @@ func GetArtistType(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Artist type not found", err),
+			utils.Error([]string{"Artist type not found", "Артист төрлийн бүртгэлтэй байхад алдаа гарлаа"}, err),
 		)
 
 		return
 	}
 
-	c.JSON(200, utils.Success("Artist type found", artisType))
+	c.JSON(200, utils.Success([]string{"Artist type found", "Артист төрлийн бүртгэлтэй амжилттай боллоо"}, artisType))
 }
 
 func UpdateArtistType(c *gin.Context) {
@@ -125,7 +125,7 @@ func UpdateArtistType(c *gin.Context) {
 	if err := c.ShouldBindJSON(&artisType); err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Artist type fields required", err),
+			utils.Error([]string{"Artist type fields required", "Артист төрлийн мэдээлэл бөглөнө үү"}, err),
 		)
 		return
 	}
@@ -134,13 +134,13 @@ func UpdateArtistType(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Artist type update failed", err),
+			utils.Error([]string{"Artist type update failed", "Артист төрлийн бүртгэлтэй амжилтгүй боллоо"}, err),
 		)
 
 		return
 	}
 
-	c.JSON(200, utils.Success("Artist type updated", artisType))
+	c.JSON(200, utils.Success([]string{"Artist type updated", "Артист төрлийн бүртгэлтэй амжилттай боллоо"}, artisType))
 
 }
 
@@ -154,7 +154,7 @@ func DeleteArtistType(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Artist type id required", nil),
+			utils.Error([]string{"Artist type id required", "Артист төрлийн ID бөглөнө үү"}, nil),
 		)
 
 		return
@@ -166,7 +166,7 @@ func DeleteArtistType(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Artist type id cannot be parsed", err),
+			utils.Error([]string{"Artist type id required", "Артист төрлийн ID бөглөнө үү"}, err),
 		)
 
 		return
@@ -176,11 +176,11 @@ func DeleteArtistType(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Artist type delete failed", err),
+			utils.Error([]string{"Artist type delete failed", "Артист төрлийн бүртгэлтэй амжилтгүй боллоо"}, err),
 		)
 
 		return
 	}
 
-	c.JSON(200, utils.Success("Artist type deleted", struct{}{}))
+	c.JSON(200, utils.Success([]string{"Artist type deleted", "Артист төрлийн бүртгэлтэй амжилттай боллоо"}, struct{}{}))
 }

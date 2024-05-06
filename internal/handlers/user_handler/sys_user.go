@@ -18,7 +18,7 @@ func CreateSysUser(c *gin.Context) {
 	if err := c.ShouldBindJSON(&sysUser); err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("System user fields required", err.Error()),
+			utils.Error([]string{"System user fields required", "Системийн хэрэглэгчийн мэдээлэл дутуу байна"}, err.Error()),
 		)
 
 		return
@@ -30,7 +30,7 @@ func CreateSysUser(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("System user creation failed", "email or phone already exist"),
+			utils.Error([]string{"System user creation failed", "Системийн хэрэглэгчийг хадгалахад боломжгүй байна. Имэйл эсвэл утасны дугаар давхардсан байна"}, "email or phone already exist"),
 		)
 
 		return
@@ -39,13 +39,13 @@ func CreateSysUser(c *gin.Context) {
 	if err := sysUser.Create(); err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("System user creation failed", err.Error()),
+			utils.Error([]string{"System user creation failed", "Системийн хэрэглэгчийг хадгалахад алдаа гарлаа"}, err.Error()),
 		)
 
 		return
 	}
 
-	c.JSON(200, utils.Success("System user created", struct{}{}))
+	c.JSON(200, utils.Success([]string{"System user created", "Системийн хэрэглэгчийг хадгаллаа"}, struct{}{}))
 
 }
 
@@ -58,7 +58,7 @@ func GetSysUser(c *gin.Context) {
 	if !ok {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("System user id required", "id must be required"),
+			utils.Error([]string{"System user id required", "Системийн хэрэглэгчийн id дутуу байна"}, "id must be required"),
 		)
 		return
 	}
@@ -68,7 +68,7 @@ func GetSysUser(c *gin.Context) {
 	if err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("System user id cannot be parsed", err.Error()),
+			utils.Error([]string{"System user id cannot be parsed", "Системийн хэрэглэгчийн id давхардсан байна"}, err.Error()),
 		)
 		return
 	}
@@ -76,7 +76,7 @@ func GetSysUser(c *gin.Context) {
 	if err := sysUser.Get(); err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("System user not found", err.Error()),
+			utils.Error([]string{"System user not found", "Системийн хэрэглэгчийг олдсонгүй"}, err.Error()),
 		)
 		return
 	}
@@ -84,14 +84,14 @@ func GetSysUser(c *gin.Context) {
 	if sysUser.ID == 0 {
 		c.JSON(
 			http.StatusNoContent,
-			utils.Success("No content", nil),
+			utils.Success([]string{"System user not found", "Системийн хэрэглэгчийг олдсонгүй"}, nil),
 		)
 		return
 	}
 
 	sysUser.Password = ""
 
-	c.JSON(200, utils.Success("System user", sysUser))
+	c.JSON(200, utils.Success([]string{"User found", "Хэрэглэгч олдсон"}, sysUser))
 }
 
 func GetSysUserList(c *gin.Context) {
@@ -104,7 +104,7 @@ func GetSysUserList(c *gin.Context) {
 	if err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("System user list not found", err.Error()),
+			utils.Error([]string{"System user list not found", "Системийн хэрэглэгчийн жагсаалт олдсонгүй"}, err.Error()),
 		)
 		return
 	}
@@ -114,7 +114,7 @@ func GetSysUserList(c *gin.Context) {
 		sysUsers[i].Password = ""
 	}
 
-	c.JSON(200, utils.Success("System user list", sysUsers))
+	c.JSON(200, utils.Success([]string{"System user list", "Системийн хэрэглэгчийн жагсаалт"}, sysUsers))
 
 }
 
@@ -126,7 +126,7 @@ func LoginSysUser(c *gin.Context) {
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("System user login fields required", err.Error()),
+			utils.Error([]string{"System user login fields required", "Системийн хэрэглэгчийн мэдээлэл дутуу байна"}, err.Error()),
 		)
 		return
 	}
@@ -138,7 +138,7 @@ func LoginSysUser(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("System user login failed", err.Error()),
+			utils.Error([]string{"System user login failed", "Системийн хэрэглэгчийн мэдээлэл давхардсан байна"}, err.Error()),
 		)
 		return
 	}
@@ -149,7 +149,7 @@ func LoginSysUser(c *gin.Context) {
 
 		c.JSON(
 			http.StatusForbidden,
-			utils.Error("System user login failed", "inactive user"),
+			utils.Error([]string{"System user login failed", "Системийн хэрэглэгчийн мэдээлэл давхардсан байна"}, "inactive user"),
 		)
 		return
 	}
@@ -161,7 +161,7 @@ func LoginSysUser(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("System user login failed in marshal json", err.Error()),
+			utils.Error([]string{"System user login failed in marshal json", "Системийн хэрэглэгч нэвтрэх json задлахад алдаа гарлаа"}, err.Error()),
 		)
 		return
 	}
@@ -170,7 +170,7 @@ func LoginSysUser(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("System user login failed in set redis", err.Error()),
+			utils.Error([]string{"System user login failed in redis set", "Системийн хэрэглэгч нэвтрэх redis холбоход алдаа гарлаа"}, err.Error()),
 		)
 
 		return
@@ -178,7 +178,7 @@ func LoginSysUser(c *gin.Context) {
 
 	sysUser.Token = token
 
-	c.JSON(200, utils.Success("System user login", sysUser))
+	c.JSON(200, utils.Success([]string{"System user login success", "Системийн хэрэглэгч нэвтрэх амжилттай боллоо"}, sysUser))
 
 }
 
@@ -188,7 +188,7 @@ func UpdateSysUser(c *gin.Context) {
 	if err := c.ShouldBindJSON(&sysUser); err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("System user fields required", err.Error()),
+			utils.Error([]string{"System user update fields required", "Системийн хэрэглэгчийн мэдээлэл дутуу байна"}, err.Error()),
 		)
 		return
 	}
@@ -197,12 +197,12 @@ func UpdateSysUser(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("System user update failed", err.Error()),
+			utils.Error([]string{"System user update failed", "Системийн хэрэглэгчийн шинэчилэхэд алдаа гарлаа байна"}, err.Error()),
 		)
 		return
 	}
 
-	c.JSON(200, utils.Success("System user updated", sysUser))
+	c.JSON(200, utils.Success([]string{"System user update success", "Системийн хэрэглэгчийн шинэчилэх амжилттай боллоо"}, sysUser))
 
 }
 
@@ -215,7 +215,7 @@ func DeleteSysUser(c *gin.Context) {
 	if !ok {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("System user id required", "id must be required"),
+			utils.Error([]string{"System user id required", "Системийн хэрэглэгчийн id дутуу байна"}, "id must be required"),
 		)
 		return
 	}
@@ -225,7 +225,7 @@ func DeleteSysUser(c *gin.Context) {
 	if err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("System user id cannot be parsed", err.Error()),
+			utils.Error([]string{"System user id cannot be parsed", "Системийн хэрэглэгчийн id давхардсан байна"}, err.Error()),
 		)
 		return
 	}
@@ -233,10 +233,10 @@ func DeleteSysUser(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("System user delete failed", err.Error()),
+			utils.Error([]string{"System user delete failed", "Системийн хэрэглэгчийг устгахад алдаа гарлаа"}, err.Error()),
 		)
 		return
 	}
 
-	c.JSON(200, utils.Success("System user deleted", struct{}{}))
+	c.JSON(200, utils.Success([]string{"System user delete success", "Системийн хэрэглэгчийг амжилттай устгалаа"}, struct{}{}))
 }

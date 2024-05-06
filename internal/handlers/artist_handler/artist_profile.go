@@ -15,7 +15,7 @@ func CreateArtistProfile(c *gin.Context) {
 	if err := c.ShouldBind(&artistProfile); err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Artist profile fields required", err),
+			utils.Error([]string{"Artist profile fields required", "Артист үүсгэхдээ бүрэн бөглөнө үү"}, err),
 		)
 		return
 	}
@@ -23,12 +23,12 @@ func CreateArtistProfile(c *gin.Context) {
 	if err := artistProfile.Create(); err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Artist profile creation failed", err),
+			utils.Error([]string{"Artist profile creation failed", "Артист үүсгэхэд алдаа гарлаа"}, err),
 		)
 		return
 	}
 
-	c.JSON(http.StatusCreated, utils.Success("Artist profile created", artistProfile))
+	c.JSON(http.StatusCreated, utils.Success([]string{"Artist profile created", "Артист амжилттай хадгаллаа"}, artistProfile))
 }
 
 func GetArtistProfile(c *gin.Context) {
@@ -39,7 +39,7 @@ func GetArtistProfile(c *gin.Context) {
 	if !ok {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Artist profile id required", nil),
+			utils.Error([]string{"Artist profile id required", "Артист сонгогдоогүй байна"}, nil),
 		)
 		return
 	}
@@ -49,7 +49,7 @@ func GetArtistProfile(c *gin.Context) {
 	if err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Artist profile id cannot be parsed", err),
+			utils.Error([]string{"Artist profile id cannot be parsed", "Артист id буруу байна"}, err),
 		)
 		return
 	}
@@ -58,7 +58,7 @@ func GetArtistProfile(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Artist profile not found", err),
+			utils.Error([]string{"Artist profile not found", "Артист олдсонгүй"}, err),
 		)
 		return
 	}
@@ -75,13 +75,13 @@ func GetArtistProfileList(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Artist profile list not found", err),
+			utils.Error([]string{"Artist profile list not found", "Артист олдсонгүй"}, err),
 		)
 
 		return
 	}
 
-	c.JSON(200, utils.Success("Artist profile list", list))
+	c.JSON(200, utils.Success([]string{"Artist profile list", "Артист лист татлаа"}, list))
 }
 
 func UpdateArtistProfile(c *gin.Context) {
@@ -91,7 +91,7 @@ func UpdateArtistProfile(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Artist profile fields required", err),
+			utils.Error([]string{"Artist profile fields required", "Артист бүтцийн дагуу бүрэн бөглөнө үү"}, err),
 		)
 
 		return
@@ -101,13 +101,13 @@ func UpdateArtistProfile(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Artist profile update failed", err),
+			utils.Error([]string{"Artist profile update failed", "Артист хадгалахад алдаа гарлаа"}, err),
 		)
 
 		return
 	}
 
-	c.JSON(200, utils.Success("Artist profile updated", artistProfile))
+	c.JSON(200, utils.Success([]string{"Artist profile updated", "Артист хадгаллаа"}, artistProfile))
 }
 
 func DeleteArtistProfile(c *gin.Context) {
@@ -120,7 +120,7 @@ func DeleteArtistProfile(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Artist profile id required", nil),
+			utils.Error([]string{"Artist profile id required", "Артист сонгогдоогүй байна"}, nil),
 		)
 		return
 	}
@@ -131,7 +131,7 @@ func DeleteArtistProfile(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Artist profile id cannot be parsed", err),
+			utils.Error([]string{"Artist profile id cannot be parsed", "Артист id буруу байна"}, err),
 		)
 		return
 
@@ -141,10 +141,10 @@ func DeleteArtistProfile(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Artist profile delete failed", err),
+			utils.Error([]string{"Artist profile delete failed", "Артист устгахад алдаа гарлаа"}, err),
 		)
 		return
 	}
 
-	c.JSON(200, utils.Success("Artist profile deleted", artistProfile))
+	c.JSON(200, utils.Success([]string{"Artist profile deleted", "Артист устгалаа"}, artistProfile))
 }

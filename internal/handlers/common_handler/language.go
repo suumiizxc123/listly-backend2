@@ -16,7 +16,7 @@ func CreateLanguage(c *gin.Context) {
 	if err := c.ShouldBindJSON(&language); err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Language fields required", err),
+			utils.Error([]string{"Language fields required", "Хэлний мэдээлэл дутуу байна"}, err),
 		)
 		return
 	}
@@ -24,12 +24,12 @@ func CreateLanguage(c *gin.Context) {
 	if err = language.Create(); err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Language creation failed", err),
+			utils.Error([]string{"Language creation failed", "Хэл хадгалахад алдаа үүслээ"}, err),
 		)
 		return
 	}
 
-	c.JSON(200, utils.Success("Language created", language))
+	c.JSON(200, utils.Success([]string{"Language created", "Хэл хадгаллаа"}, language))
 
 }
 
@@ -43,12 +43,12 @@ func GetLanguageList(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Language list not found", err),
+			utils.Error([]string{"Language list not found", "Хэлнийн жагсаалт олдсонгүй"}, err),
 		)
 		return
 	}
 
-	c.JSON(200, utils.Success("Language list", languages))
+	c.JSON(200, utils.Success([]string{"Language list", "Хэлнийн жагсаалт"}, languages))
 }
 
 func UpdateLanguage(c *gin.Context) {
@@ -58,7 +58,7 @@ func UpdateLanguage(c *gin.Context) {
 	if err := c.ShouldBindJSON(&language); err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Language fields required", err),
+			utils.Error([]string{"Language fields required", "Хэлний мэдээлэл дутуу байна"}, err),
 		)
 		return
 	}
@@ -66,12 +66,12 @@ func UpdateLanguage(c *gin.Context) {
 	if err = language.Update(); err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Language update failed", err),
+			utils.Error([]string{"Language update failed", "Хэл хадгалахад алдаа үүслээ"}, err),
 		)
 		return
 	}
 
-	c.JSON(200, utils.Success("Language updated", language))
+	c.JSON(200, utils.Success([]string{"Language updated", "Хэл хадгаллаа"}, language))
 
 }
 
@@ -84,7 +84,7 @@ func DeleteLanguage(c *gin.Context) {
 	if !ok {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Language id required", err),
+			utils.Error([]string{"Language id required", "Хэлний id дутуу байна"}, err),
 		)
 		return
 	}
@@ -94,7 +94,7 @@ func DeleteLanguage(c *gin.Context) {
 	if err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Language id cannot be parsed", err),
+			utils.Error([]string{"Language id cannot be parsed", "Хэлний id буруу байна"}, err),
 		)
 		return
 	}
@@ -102,11 +102,11 @@ func DeleteLanguage(c *gin.Context) {
 	if err = language.Delete(); err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Language deletion failed", err),
+			utils.Error([]string{"Language deletion failed", "Хэл устгахад алдаа үүслээ"}, err),
 		)
 		return
 	}
 
-	c.JSON(200, utils.Success("Language deleted", language))
+	c.JSON(200, utils.Success([]string{"Language deleted", "Хэл устгалаа"}, language))
 
 }

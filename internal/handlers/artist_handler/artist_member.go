@@ -16,7 +16,7 @@ func CreateArtistMember(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Artist profile fields required", err),
+			utils.Error([]string{"Artist member fields required", "Артист груп дууны мэдээлэл үүсгэхдээ бүрэн бөглөнө үү"}, err),
 		)
 
 		return
@@ -26,13 +26,13 @@ func CreateArtistMember(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Artist profile creation failed", err),
+			utils.Error([]string{"Artist profile creation failed", "Артист груп үүсгэхэд алдаа гарлаа"}, err),
 		)
 
 		return
 	}
 
-	c.JSON(http.StatusCreated, utils.Success("Artist profile created", artistMember))
+	c.JSON(http.StatusCreated, utils.Success([]string{"Artist profile created", "Артист груп үүсгэгдсэн"}, artistMember))
 
 }
 
@@ -46,12 +46,12 @@ func GetArtistMemberList(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Artist profile list not found", err),
+			utils.Error([]string{"Artist profile list not found", "Артист групууд олдсонгүй"}, err),
 		)
 		return
 	}
 
-	c.JSON(200, utils.Success("Artist profile list", list))
+	c.JSON(200, utils.Success([]string{"Artist profile list", "Артист групууд лист татлаа"}, list))
 }
 
 func UpdateArtistMember(c *gin.Context) {
@@ -62,7 +62,7 @@ func UpdateArtistMember(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Artist profile fields required", err),
+			utils.Error([]string{"Artist member fields required", "Артист груп дууны мэдээлэл үүсгэхдээ бүрэн бөглөнө үү"}, err),
 		)
 
 		return
@@ -72,13 +72,13 @@ func UpdateArtistMember(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Artist profile update failed", err),
+			utils.Error([]string{"Artist profile update failed", "Артист хадгалахад алдаа гарлаа"}, err),
 		)
 
 		return
 	}
 
-	c.JSON(200, utils.Success("Artist profile updated", artistMember))
+	c.JSON(200, utils.Success([]string{"Artist profile updated", "Артист хадгаллаа"}, artistMember))
 }
 
 func DeleteArtistMember(c *gin.Context) {
@@ -91,7 +91,7 @@ func DeleteArtistMember(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Artist profile id required", nil),
+			utils.Error([]string{"Artist profile id required", "Артист груп дууны id бөглөнө үү"}, nil),
 		)
 
 		return
@@ -103,7 +103,7 @@ func DeleteArtistMember(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Artist profile id cannot be parsed", err),
+			utils.Error([]string{"Artist profile id cannot be parsed", "Артист груп дууны id буруу байна"}, err),
 		)
 
 		return
@@ -113,13 +113,13 @@ func DeleteArtistMember(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Artist profile delete failed", err),
+			utils.Error([]string{"Artist profile deletion failed", "Артист груп устгахад алдаа гарлаа"}, err),
 		)
 
 		return
 	}
 
-	c.JSON(200, utils.Success("Artist profile deleted", nil))
+	c.JSON(200, utils.Success([]string{"Artist profile deleted", "Артист груп устгалаа"}, nil))
 }
 
 func GetArtistMember(c *gin.Context) {
@@ -132,7 +132,7 @@ func GetArtistMember(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Artist profile id required", nil),
+			utils.Error([]string{"Artist profile id required", "Артист груп дууны id бөглөнө үү"}, nil),
 		)
 
 		return
@@ -144,7 +144,7 @@ func GetArtistMember(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Artist profile id cannot be parsed", err),
+			utils.Error([]string{"Artist profile id cannot be parsed", "Артист груп дууны id буруу байна"}, err),
 		)
 
 		return
@@ -154,11 +154,11 @@ func GetArtistMember(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Artist profile not found", err),
+			utils.Error([]string{"Artist profile not found", "Артист олдсонгүй"}, err),
 		)
 
 		return
 	}
 
-	c.JSON(200, utils.Success("Artist profile found", artistMember))
+	c.JSON(200, utils.Success([]string{"Artist profile found", "Артист олдсон"}, artistMember))
 }

@@ -18,7 +18,7 @@ func CreateUser(c *gin.Context) {
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("User fields required", err.Error()),
+			utils.Error([]string{"User fields required", "Хэрэглэгчийн мэдээлэл дутуу байна"}, err.Error()),
 		)
 		return
 	}
@@ -27,7 +27,7 @@ func CreateUser(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("User creation failed", "email or phone already exist"),
+			utils.Error([]string{"User creation failed", "Хэрэглэгчийн мэдээлэл үүссэн хэрэглэгчтэй давхардаж байна. Имэйл эсвэл утасны дугаар давхардсан байна"}, "email or phone already exist"),
 		)
 		return
 	}
@@ -37,14 +37,14 @@ func CreateUser(c *gin.Context) {
 	if err := user.Create(); err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("User creation failed", err.Error()),
+			utils.Error([]string{"User creation failed", "Хэрэглэгчийг хадгалахад алдаа гарлаа"}, err.Error()),
 		)
 		return
 	}
 
 	user.Password = ""
 
-	c.JSON(200, utils.Success("User created", user))
+	c.JSON(200, utils.Success([]string{"User creation successful", "Хэрэглэгчийг хадгаллаа"}, user))
 }
 
 func LoginUser(c *gin.Context) {
@@ -54,7 +54,7 @@ func LoginUser(c *gin.Context) {
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("Login fields required", err.Error()),
+			utils.Error([]string{"User fields required", "Хэрэглэгчийн мэдээлэл дутуу байна"}, err.Error()),
 		)
 		return
 	}
@@ -64,7 +64,7 @@ func LoginUser(c *gin.Context) {
 	if err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Login failed", err.Error()),
+			utils.Error([]string{"Login failed", "Хэрэглэгч нэвтрэхэд алдаа гарлаа"}, err.Error()),
 		)
 		return
 	}
@@ -75,7 +75,7 @@ func LoginUser(c *gin.Context) {
 
 		c.JSON(
 			http.StatusForbidden,
-			utils.Error("Login failed", "user not active"),
+			utils.Error([]string{"Login failed", "Хэрэглэгч идэвхгүй байна"}, "user not active"),
 		)
 		return
 	}
@@ -88,7 +88,7 @@ func LoginUser(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Login failed", err.Error()),
+			utils.Error([]string{"Login failed", "Хэрэглэгчийн мэдээлэл ашиглахад алдаа гарлаа. "}, err.Error()),
 		)
 		return
 	}
@@ -97,14 +97,14 @@ func LoginUser(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("Login failed", err.Error()),
+			utils.Error([]string{"Login failed", "Хэрэглэгчийн мэдээллийг санахад алдаа гарлаа. RS"}, err.Error()),
 		)
 		return
 	}
 
 	user.Token = token
 
-	c.JSON(200, utils.Success("Login successful", user))
+	c.JSON(200, utils.Success([]string{"Login successful", "Амжилттай нэвтэрлээ"}, user))
 }
 
 func GetUser(c *gin.Context) {
@@ -115,7 +115,7 @@ func GetUser(c *gin.Context) {
 	if !ok {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("User id required", "id must be required"),
+			utils.Error([]string{"User id required", "Хэрэглэгчийн ID дутуу байна"}, "id must be required"),
 		)
 		return
 	}
@@ -125,7 +125,7 @@ func GetUser(c *gin.Context) {
 	if err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("User id required", err.Error()),
+			utils.Error([]string{"User id required", "Хэрэглэгчийн ID буруу байна"}, err.Error()),
 		)
 		return
 	}
@@ -133,7 +133,7 @@ func GetUser(c *gin.Context) {
 	if user.ID == 0 {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("User id required", "id must be required"),
+			utils.Error([]string{"User id required", "Хэрэглэгчийн ID дутуу байна"}, "id must be required"),
 		)
 		return
 	}
@@ -141,14 +141,14 @@ func GetUser(c *gin.Context) {
 	if err := user.Get(); err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("User not found", err.Error()),
+			utils.Error([]string{"User not found", "Хэрэглэгчийг олдсонгүй алдаа гарлаа"}, err.Error()),
 		)
 		return
 	}
 
 	user.Password = ""
 
-	c.JSON(200, utils.Success("User found", user))
+	c.JSON(200, utils.Success([]string{"User found", "Хэрэглэгч олдлоо"}, user))
 }
 
 func GetUserList(c *gin.Context) {
@@ -160,7 +160,7 @@ func GetUserList(c *gin.Context) {
 	if err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("User list not found", err.Error()),
+			utils.Error([]string{"User list not found", "Хэрэглэгчийн жагсаалт олдсонгүй алдаа гарлаа"}, err.Error()),
 		)
 		return
 	}
@@ -170,7 +170,7 @@ func GetUserList(c *gin.Context) {
 		users[i].Password = ""
 	}
 
-	c.JSON(200, utils.Success("User list", users))
+	c.JSON(200, utils.Success([]string{"User list", "Хэрэглэгчийн жагсаалт"}, users))
 }
 
 func UpdateUser(c *gin.Context) {
@@ -179,7 +179,7 @@ func UpdateUser(c *gin.Context) {
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("User fields required", err.Error()),
+			utils.Error([]string{"User fields required", "Хэрэглэгчийн мэдээлэл дутуу байна"}, err.Error()),
 		)
 		return
 	}
@@ -187,12 +187,12 @@ func UpdateUser(c *gin.Context) {
 	if err := user.Update(); err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("User update failed", err.Error()),
+			utils.Error([]string{"User update failed", "Хэрэглэгчийг хадгалахад алдаа гарлаа"}, err.Error()),
 		)
 		return
 	}
 
-	c.JSON(200, utils.Success("User updated", struct{}{}))
+	c.JSON(200, utils.Success([]string{"User update success", "Хэрэглэгчийг шинэчилэх амжилттай боллоо"}, struct{}{}))
 }
 
 func DeleteUser(c *gin.Context) {
@@ -204,7 +204,7 @@ func DeleteUser(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("User id required", "id must be required"),
+			utils.Error([]string{"User id required", "Хэрэглэгчийн ID дутуу байна"}, "id must be required"),
 		)
 		return
 	}
@@ -215,7 +215,7 @@ func DeleteUser(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error("User id cannot be parsed", err.Error()),
+			utils.Error([]string{"User id cannot be parsed", "Хэрэглэгчийн ID буруу байна"}, err.Error()),
 		)
 		return
 	}
@@ -223,10 +223,10 @@ func DeleteUser(c *gin.Context) {
 	if err := user.Delete(); err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error("User delete failed", err.Error()),
+			utils.Error([]string{"User delete failed", "Хэрэглэгчийг устгахад алдаа гарлаа"}, err.Error()),
 		)
 		return
 	}
 
-	c.JSON(200, utils.Success("User deleted", struct{}{}))
+	c.JSON(200, utils.Success([]string{"User delete success", "Хэрэглэгчийг устгах амжилттай боллоо"}, struct{}{}))
 }
