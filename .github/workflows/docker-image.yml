@@ -1,5 +1,5 @@
 env:
-  CURRENT_DATE: $((`date +%s`))
+  CURRENT_DATE: ${{ steps.timestamp.outputs.timestamp }}
 
 name: Docker Image CI
 
@@ -17,6 +17,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
+    # Step to generate the timestamp
+    - name: Generate Timestamp
+      id: timestamp
+      run: echo "::set-output name=timestamp::$(date +%s)"
+
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag "${{ secrets.DOCKER_USERNAME }}/kcloudb2image:${CURRENT_DATE}"
     
