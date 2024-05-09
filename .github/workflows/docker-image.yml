@@ -7,6 +7,11 @@ on:
     branches: [ "main" ]
 
 jobs:
+  print-date:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Print current date
+          run: echo "Current date is $(date)"
 
   build:
 
