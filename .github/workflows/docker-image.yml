@@ -41,15 +41,9 @@ jobs:
 
       # Deploy stack using Docker Compose via SSH
       - name: Deploy stack via SSH
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.KCLOUD_HOST }}
-          username: ${{ secrets.KCLOUD_USER }}
-          password: ${{ secrets.KCLOUD_PASSWORD }}
-          port: 22
-          script: |
-            IMAGE_TAG=${{ steps.current_date.outputs.IMAGE_TAG }}
-            sshpass -p "${{ secrets.KCLOUD_PASSWORD }}" ssh ${{ secrets.KCLOUD_USER }}@${{ secrets.KCLOUD_HOST }} << EOF
-            sed -i "s/{IMAGE_TAG}/$IMAGE_TAG/" /home/kcloud/docker-compose.yml
-            docker stack deploy -c /home/kcloud/docker-compose.yml kcloudstack
-            EOF
+        run: |
+          IMAGE_TAG=${{ steps.current_date.outputs.IMAGE_TAG }}
+          sshpass -p "${{ secrets.KCLOUD_PASSWORD }}" ssh ${{ secrets.KCLOUD_USER }}@${{ secrets.KCLOUD_HOST }} << EOF
+          sed -i "s/{IMAGE_TAG}/$IMAGE_TAG/" /home/kcloud/docker-compose.yml
+          docker stack deploy -c /home/kcloud/docker-compose.yml kcloudstack
+          EOF
