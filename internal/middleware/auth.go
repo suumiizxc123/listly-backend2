@@ -12,6 +12,17 @@ import (
 
 func AuthSysUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		validSecret := c.GetHeader("X-Auth-Secret")
+
+		if validSecret != "BblH6rsyEWlWOB6x2hkm6m1Ga3ITHCba" {
+
+			c.JSON(http.StatusForbidden, utils.Error(
+				[]string{"Forbidden", "Хэрэглэгч нэвтрээгүй байна"},
+				"Forbidden",
+			))
+			return
+		}
+
 		token := c.GetHeader("Authorization")
 		objToken, err := config.RS.Get(token).Result()
 

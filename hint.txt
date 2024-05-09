@@ -9,3 +9,10 @@ docker stack ps kcloudstack
 docker stack services kcloudstack_app
 
 docker service scale kcloudstack_app=5
+
+//////////////////////////////////////
+
+docker build -t suumiizxc0519/kcloudimage:v1 .
+
+docker push suumiizxc0519/kcloudimage:v1
+

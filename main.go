@@ -32,10 +32,6 @@ func main() {
 	config.RedisConfig()
 
 	r := gin.Default()
-	// f, err := os.Create("gin.log")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
 
 	r.Use(Cors())
 	// gin.DefaultWriter = io.MultiWriter(f)

@@ -138,7 +138,7 @@ func LoginSysUser(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error([]string{"System user login failed", "Системийн хэрэглэгчийн мэдээлэл давхардсан байна"}, err.Error()),
+			utils.Error([]string{"System user login failed", "Хэрэглэгч нэвтрэхэд алдаа гарлаа"}, err.Error()),
 		)
 		return
 	}
