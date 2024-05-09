@@ -43,7 +43,7 @@ jobs:
       - name: Deploy stack via SSH
         run: |
           IMAGE_TAG=${{ steps.current_date.outputs.IMAGE_TAG }}
-          sshpass -p "${{ secrets.KCLOUD_PASSWORD }}" ssh ${{ secrets.KCLOUD_USER }}@${{ secrets.KCLOUD_HOST }} << EOF
+          sshpass -p "${{ secrets.KCLOUD_PASSWORD }}" ssh -T ${{ secrets.KCLOUD_USER }}@${{ secrets.KCLOUD_HOST }} << EOF
           sed -i "s/{IMAGE_TAG}/$IMAGE_TAG/" /home/kcloud/docker-compose.yml
           docker stack deploy -c /home/kcloud/docker-compose.yml kcloudstack
           EOF
