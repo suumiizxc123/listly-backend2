@@ -45,7 +45,6 @@ jobs:
         with:
           host: ${{ secrets.KCLOUD_HOST }}
           username: ${{ secrets.KCLOUD_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.KCLOUD_PORT }}
           args: -v  # Add this line to enable verbose output
           script: |
