@@ -35,10 +35,6 @@ jobs:
           IMAGE_TAG=${{ steps.current_date.outputs.IMAGE_TAG }}
           docker push "${{ secrets.DOCKER_USERNAME }}/kcloudb2image:${IMAGE_TAG}"
 
-      # Install sshpass
-      - name: Install sshpass
-        run: sudo apt update && sudo apt install -y sshpass
-
       # Deploy stack using Docker Compose via SSH
       - name: Deploy using SSH
         uses: appleboy/ssh-action@master
