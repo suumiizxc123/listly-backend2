@@ -16,7 +16,7 @@ func CheckSecret() gin.HandlerFunc {
 
 		secret := c.GetHeader("X-Secret")
 		if secret != "BblH6rsyEWlWOB6x2hkm6m1Ga3ITHCba" {
-			c.JSON(http.StatusUnauthorized, utils.Error(
+			c.JSON(http.StatusNotFound, utils.Error(
 				[]string{"Unauthorized", "Хэрэглэгч зөвшөөрөгдөөгүй төхөөрөмжнөөс нэвтрэсэн байна"},
 				"X-Secret",
 			))
