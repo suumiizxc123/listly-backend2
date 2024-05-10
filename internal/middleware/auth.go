@@ -14,8 +14,20 @@ import (
 func CheckSecret() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
-		secret := c.GetHeader("X-Secret")
-		if secret != "BblH6rsyEWlWOB6x2hkm6m1Ga3ITHCba" {
+		authHeader := c.GetHeader("Authorization")
+		if authHeader == "" {
+			c.JSON(http.StatusUnauthorized, utils.Error(
+				[]string{"Forbidden", "Зөвшөөрөгдөөгүй нэвтрэлт"},
+				"Forbidden",
+			))
+			c.Abort()
+			return
+		}
+
+		// Assuming the token is in the format "Bearer <token>"
+		token := strings.TrimPrefix(authHeader, "Bearer ")
+
+		if token != "BblH6rsyEWlWOB6x2hkm6m1Ga3ITHCba" {
 			c.JSON(http.StatusNotFound, utils.Error(
 				[]string{"Unauthorized", "Хэрэглэгч зөвшөөрөгдөөгүй төхөөрөмжнөөс нэвтрэсэн байна"},
 				"X-Secret",
@@ -29,8 +41,19 @@ func CheckSecret() gin.HandlerFunc {
 
 func AuthSysUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		authHeader := c.GetHeader("Authorization")
+		if authHeader == "" {
+			c.JSON(http.StatusUnauthorized, utils.Error(
+				[]string{"Forbidden", "Зөвшөөрөгдөөгүй нэвтрэлт"},
+				"Forbidden",
+			))
+			c.Abort()
+			return
+		}
 
-		token := c.GetHeader("Authorization")
+		// Assuming the token is in the format "Bearer <token>"
+		token := strings.TrimPrefix(authHeader, "Bearer ")
+
 		objToken, err := config.RS.Get(token).Result()
 
 		if err != nil {
@@ -85,7 +108,10 @@ func AuthUser() gin.HandlerFunc {
 
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Missing authorization token"})
+			c.JSON(http.StatusUnauthorized, utils.Error(
+				[]string{"Forbidden", "Зөвшөөрөгдөөгүй нэвтрэлт"},
+				"Forbidden",
+			))
 			c.Abort()
 			return
 		}

@@ -2,7 +2,6 @@ package main
 
 import (
 	"kcloudb1/internal/config"
-	"kcloudb1/internal/middleware"
 	"kcloudb1/internal/routes/artist_route"
 	"kcloudb1/internal/routes/common_route"
 	"kcloudb1/internal/routes/org_route"
@@ -38,8 +37,6 @@ func main() {
 	// gin.DefaultWriter = io.MultiWriter(f)
 
 	v1 := r.Group("/api/v1")
-
-	v1.Use(middleware.CheckSecret())
 
 	user_route.SysUserRoute(v1)
 	user_route.UserRoute(v1)
