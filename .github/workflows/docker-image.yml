@@ -40,14 +40,14 @@ jobs:
         run: sudo apt update && sudo apt install -y sshpass
 
       # Deploy stack using Docker Compose via SSH
-      - name: Deploy to server
-        run: |
-          sshpass -p '${{ secrets.KCLOUD_PASSWORD }}' ssh -v -o StrictHostKeyChecking=no ${{ secrets.KCLOUD_USER }}@${{ secrets.KCLOUD_HOST }} <<'ENDSSH'
-          cd ${{ secrets.APP_PATH }}
-          mkdir test
-          # git pull
-          # docker stop ${{ secrets.APP_NAME }}
-          # docker system prune -f
-          # export ${{ secrets.API_KEY_NAME }}=${{ secrets.API_KEY }}
-          # make deploy_headless
-          ENDSSH
+      - name: Deploy using SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.KCLOUD_HOST }}
+          username: ${{ secrets.KCLOUD_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.KCLOUD_PORT }}
+          script: |
+            cd ${{ secrets.APP_PATH }}
+            mkdir test
+            # Add more deployment steps as needed
