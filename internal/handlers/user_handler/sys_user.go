@@ -206,6 +206,53 @@ func UpdateSysUser(c *gin.Context) {
 
 }
 
+func UpdateSysUserPassword(c *gin.Context) {
+	var input struct {
+		Phone       string `json:"phone"`
+		Password    string `json:"password"`
+		NewPassword string `json:"new_password"`
+	}
+	var sysUser user.SysUser
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(
+			http.StatusBadRequest,
+			utils.Error([]string{"System user update fields required", "Системийн хэрэглэгчийн мэдээлэл дутуу байна"}, err.Error()),
+		)
+		return
+	}
+
+	if err := config.DB.Where("phone = ?", input.Phone).First(&sysUser).Error; err != nil {
+
+		c.JSON(
+			http.StatusInternalServerError,
+			utils.Error([]string{"System user not found", "Системийн хэрэглэгчийг олдсонгүй"}, err.Error()),
+		)
+		return
+	}
+
+	if input.Password != sysUser.Password {
+		c.JSON(
+			http.StatusForbidden,
+			utils.Error([]string{"System user password did not match", "Системийн хэрэглэгчийн нууц үг буруу боллоо"}, "incorrect password"),
+		)
+		return
+	}
+
+	sysUser.Password = input.NewPassword
+
+	if err := sysUser.Update(); err != nil {
+
+		c.JSON(
+			http.StatusInternalServerError,
+			utils.Error([]string{"System user update failed", "Системийн хэрэглэгчийн шинэчилэхэд алдаа гарлаа байна"}, err.Error()),
+		)
+		return
+	}
+
+	c.JSON(200, utils.Success([]string{"System user update password success", "Системийн хэрэглэгчийн шинэчилэх амжилттай боллоо"}, struct{}{}))
+}
+
 func DeleteSysUser(c *gin.Context) {
 	var err error
 	var sysUser user.SysUser

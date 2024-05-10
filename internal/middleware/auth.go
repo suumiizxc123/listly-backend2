@@ -6,22 +6,29 @@ import (
 	"kcloudb1/internal/models/user"
 	"kcloudb1/internal/utils"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
-func AuthSysUser() gin.HandlerFunc {
+func CheckSecret() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		validSecret := c.GetHeader("X-Auth-Secret")
 
-		if validSecret != "BblH6rsyEWlWOB6x2hkm6m1Ga3ITHCba" {
-
-			c.JSON(http.StatusForbidden, utils.Error(
-				[]string{"Forbidden", "Хэрэглэгч нэвтрээгүй байна"},
-				"Forbidden",
+		secret := c.GetHeader("X-Secret")
+		if secret != "BblH6rsyEWlWOB6x2hkm6m1Ga3ITHCba" {
+			c.JSON(http.StatusUnauthorized, utils.Error(
+				[]string{"Unauthorized", "Хэрэглэгч зөвшөөрөгдөөгүй төхөөрөмжнөөс нэвтрэсэн байна"},
+				"X-Secret",
 			))
+			c.Abort()
 			return
 		}
+		c.Next()
+	}
+}
+
+func AuthSysUser() gin.HandlerFunc {
+	return func(c *gin.Context) {
 
 		token := c.GetHeader("Authorization")
 		objToken, err := config.RS.Get(token).Result()
@@ -75,7 +82,17 @@ func AuthSysUser() gin.HandlerFunc {
 
 func AuthUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		token := c.GetHeader("Authorization")
+
+		authHeader := c.GetHeader("Authorization")
+		if authHeader == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Missing authorization token"})
+			c.Abort()
+			return
+		}
+
+		// Assuming the token is in the format "Bearer <token>"
+		token := strings.TrimPrefix(authHeader, "Bearer ")
+
 		objToken, err := config.RS.Get(token).Result()
 
 		if err != nil {

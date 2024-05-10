@@ -15,6 +15,7 @@ func SysUserRoute(r *gin.RouterGroup) {
 		sysUserGroup.GET("/list", middleware.AuthSysUser(), user_handler.GetSysUserList)
 		sysUserGroup.GET("/get", middleware.AuthSysUser(), user_handler.GetSysUser)
 		sysUserGroup.PATCH("/update", middleware.AuthSysUser(), user_handler.UpdateSysUser)
+		sysUserGroup.PATCH("/update-password", middleware.AuthSysUser(), user_handler.UpdateSysUserPassword)
 		sysUserGroup.DELETE("/delete", middleware.AuthSysUser(), user_handler.DeleteSysUser)
 	}
 }

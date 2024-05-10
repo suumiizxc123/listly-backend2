@@ -195,6 +195,59 @@ func UpdateUser(c *gin.Context) {
 	c.JSON(200, utils.Success([]string{"User update success", "Хэрэглэгчийг шинэчилэх амжилттай боллоо"}, struct{}{}))
 }
 
+func UpdateUserPassword(c *gin.Context) {
+	var user user.User
+	var input struct {
+		Phone       string `json:"phone"`
+		Password    string `json:"password"`
+		NewPassword string `json:"new_password"`
+	}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(
+			http.StatusBadRequest,
+			utils.Error([]string{"User fields required", "Хэрэглэгчийн мэдээлэл дутуу байна"}, err.Error()),
+		)
+		return
+	}
+
+	if err := config.DB.Where("phone = ? ", input.Phone).First(&user).Error; err != nil {
+		c.JSON(
+			http.StatusInternalServerError,
+			utils.Error([]string{"User not found", "Хэрэглэгчийг олдсонгүй алдаа гарлаа"}, err.Error()),
+		)
+		return
+	}
+
+	if user.ID == 0 {
+		c.JSON(
+			http.StatusBadRequest,
+			utils.Error([]string{"User not found", "Хэрэглэгчийг олдсонгүй алдаа гарлаа"}, "user not found"),
+		)
+		return
+	}
+
+	if input.Password != user.Password {
+		c.JSON(
+			http.StatusBadRequest,
+			utils.Error([]string{"User password incorrect", "Хэрэглэгчийн нууц үг буруу байна"}, "password incorrect"),
+		)
+		return
+	}
+
+	user.Password = input.NewPassword
+
+	if err := user.Update(); err != nil {
+		c.JSON(
+			http.StatusInternalServerError,
+			utils.Error([]string{"User update failed", "Хэрэглэгчийг шинэчилэхэд алдаа гарлаа"}, err.Error()),
+		)
+		return
+	}
+
+	c.JSON(200, utils.Success([]string{"User update success", "Хэрэглэгчийг шинэчилэх амжилттай боллоо"}, struct{}{}))
+}
+
 func DeleteUser(c *gin.Context) {
 	var user user.User
 	var err error

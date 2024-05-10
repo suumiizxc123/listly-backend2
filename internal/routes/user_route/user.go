@@ -15,6 +15,7 @@ func UserRoute(r *gin.RouterGroup) {
 		userGroup.GET("/list", middleware.AuthUser(), user_handler.GetUserList)
 		userGroup.GET("/get", middleware.AuthUser(), user_handler.GetUser)
 		userGroup.PATCH("/update", middleware.AuthUser(), user_handler.UpdateUser)
+		userGroup.PATCH("/update-password", middleware.AuthUser(), user_handler.UpdateUserPassword)
 		userGroup.DELETE("/delete", middleware.AuthUser(), user_handler.DeleteUser)
 	}
 }
