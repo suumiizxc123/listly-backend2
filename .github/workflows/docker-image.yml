@@ -45,5 +45,5 @@ jobs:
           port: ${{ secrets.KCLOUD_PORT }}
           script: |
             cd ${{ secrets.APP_PATH }}
-            echo "${{ secrets.KCLOUD_PASSWORD }}" | sudo -S touch test.txt
+            echo "${{ secrets.KCLOUD_PASSWORD }}" | sudo -S touch pisda.txt
             # Add more deployment steps as needed
