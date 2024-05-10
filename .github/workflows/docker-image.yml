@@ -45,5 +45,5 @@ jobs:
           port: ${{ secrets.KCLOUD_PORT }}
           script: |
             cd ${{ secrets.APP_PATH }}
-            echo "${{ secrets.KCLOUD_PASSWORD }}" | sudo -S touch pisda.txt
+            echo "${{ secrets.KCLOUD_PASSWORD }}" | sudo ./generate-compose.sh "${{ steps.current_date.outputs.IMAGE_TAG }}"
             # Add more deployment steps as needed
