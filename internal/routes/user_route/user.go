@@ -17,5 +17,6 @@ func UserRoute(r *gin.RouterGroup) {
 		userGroup.PATCH("/update", middleware.AuthUser(), user_handler.UpdateUser)
 		userGroup.PATCH("/update-password", middleware.AuthUser(), user_handler.UpdateUserPassword)
 		userGroup.DELETE("/delete", middleware.AuthUser(), user_handler.DeleteUser)
+		//update unique phone number
 	}
 }
