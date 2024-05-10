@@ -45,5 +45,5 @@ jobs:
           port: ${{ secrets.KCLOUD_PORT }}
           script: |
             cd ${{ secrets.APP_PATH }}
-            mkdir test
+            touch test.txt
             # Add more deployment steps as needed
