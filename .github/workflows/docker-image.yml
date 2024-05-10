@@ -47,6 +47,7 @@ jobs:
           username: ${{ secrets.KCLOUD_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.KCLOUD_PORT }}
+          args: -v  # Add this line to enable verbose output
           script: |
             cd ${{ secrets.APP_PATH }}
             mkdir test
