@@ -17,7 +17,7 @@ jobs:
       # Build and push Docker image
       - name: Set current date as image tag
         id: current_date
-        run: echo "::set-output name=IMAGE_TAG::$(date +%s)"
+        run: echo "::set-output name=IMAGE_TAG::latest"
 
       - name: Build the Docker image
         run: |
