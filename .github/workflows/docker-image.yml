@@ -44,9 +44,6 @@ jobs:
           password: ${{ secrets.KCLOUD_PASSWORD }}
           port: ${{ secrets.KCLOUD_PORT }}
           script: |
-            sudo -S su << EOF
-            echo "${{ secrets.KCLOUD_PASSWORD }}" | sudo -S su
             cd ${{ secrets.APP_PATH }}
-            touch test.txt
+            sudo -S touch test.txt
             # Add more deployment steps as needed
-            EOF
