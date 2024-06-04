@@ -30,7 +30,10 @@ func main() {
 	r := gin.Default()
 
 	r.Use(Cors())
-	// gin.DefaultWriter = io.MultiWriter(f)
+
+	r.GET("/", func(c *gin.Context) {
+		c.String(http.StatusOK, "Welcome to the main page!")
+	})
 
 	v1 := r.Group("/api/v1")
 
