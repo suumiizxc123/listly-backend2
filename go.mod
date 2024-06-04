@@ -1,6 +1,6 @@
 module kcloudb1
 
-go 1.22.1
+go 1.20.1
 
 require (
 	github.com/gin-gonic/gin v1.9.1
