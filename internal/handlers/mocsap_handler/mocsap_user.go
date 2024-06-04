@@ -17,7 +17,7 @@ func CreateMoscapUser(c *gin.Context) {
 	if err := c.ShouldBindJSON(&org); err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error([]string{"Org fields required", "Байгууллагын мэдээлэл дутуу байна"}, err),
+			utils.Error([]string{"Org fields required", " мэдээлэл дутуу байна"}, err),
 		)
 		return
 	}
@@ -27,14 +27,14 @@ func CreateMoscapUser(c *gin.Context) {
 	if err = org.Create(); err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error([]string{"Org creation failed", "Байгууллага бүртгэхэд алдаа гарлаа"}, err),
+			utils.Error([]string{"Org creation failed", " бүртгэхэд алдаа гарлаа"}, err),
 		)
 		return
 	}
 
 	c.JSON(
 		http.StatusCreated,
-		utils.Success([]string{"Org created", "Байгууллага бүртгэгдлээ"}, org),
+		utils.Success([]string{"Org created", " бүртгэгдлээ"}, org),
 	)
 }
 
@@ -45,7 +45,7 @@ func UpdateMosCapUser(c *gin.Context) {
 	if err := c.ShouldBindJSON(&org); err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error([]string{"Org fields required", "Байгууллагын мэдээлэл дутуу байна"}, err),
+			utils.Error([]string{"Org fields required", " мэдээлэл дутуу байна"}, err),
 		)
 		return
 	}
@@ -54,14 +54,14 @@ func UpdateMosCapUser(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error([]string{"Org update failed", "Байгууллага бүртгэхэд алдаа гарлаа"}, err),
+			utils.Error([]string{"Org update failed", " бүртгэхэд алдаа гарлаа"}, err),
 		)
 		return
 	}
 
 	c.JSON(
 		200,
-		utils.Success([]string{"Org updated", "Байгууллага бүртгэгдлээ"}, org),
+		utils.Success([]string{"Org updated", " бүртгэгдлээ"}, org),
 	)
 }
 
@@ -74,7 +74,7 @@ func DeleteMosCapUser(c *gin.Context) {
 	if !ok {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error([]string{"Org id required", "Байгууллагын id дутуу байна"}, err),
+			utils.Error([]string{"Org id required", " id дутуу байна"}, err),
 		)
 		return
 	}
@@ -84,7 +84,7 @@ func DeleteMosCapUser(c *gin.Context) {
 	if err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error([]string{"Org id cannot be parsed", "Байгууллагын id буруу байна"}, err),
+			utils.Error([]string{"Org id cannot be parsed", " id буруу байна"}, err),
 		)
 		return
 	}
@@ -92,14 +92,14 @@ func DeleteMosCapUser(c *gin.Context) {
 	if err = org.Delete(); err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error([]string{"Org deletion failed", "Байгууллага устгахад алдаа гарлаа"}, err),
+			utils.Error([]string{"Org deletion failed", " устгахад алдаа гарлаа"}, err),
 		)
 		return
 	}
 
 	c.JSON(
 		200,
-		utils.Success([]string{"Org deleted", "Байгууллага устгагдлаа"}, struct{}{}),
+		utils.Success([]string{"Org deleted", " устгагдлаа"}, struct{}{}),
 	)
 
 }
@@ -113,7 +113,7 @@ func GetMosCapUser(c *gin.Context) {
 	if !ok {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error([]string{"Org id required", "Байгууллагын id дутуу байна"}, err),
+			utils.Error([]string{"Org id required", " id дутуу байна"}, err),
 		)
 		return
 	}
@@ -123,7 +123,7 @@ func GetMosCapUser(c *gin.Context) {
 	if err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error([]string{"Org id cannot be parsed", "Байгууллагын id буруу байна"}, err),
+			utils.Error([]string{"Org id cannot be parsed", " id буруу байна"}, err),
 		)
 		return
 	}
@@ -131,14 +131,14 @@ func GetMosCapUser(c *gin.Context) {
 	if err = org.Get(); err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error([]string{"Org not found", "Байгууллага буруу байна"}, err),
+			utils.Error([]string{"Org not found", " буруу байна"}, err),
 		)
 		return
 	}
 
 	c.JSON(
 		200,
-		utils.Success([]string{"Org found", "Байгууллага бүртгэгдлээ"}, org),
+		utils.Success([]string{"Org found", " бүртгэгдлээ"}, org),
 	)
 
 }
@@ -152,13 +152,13 @@ func GetMosCapUserList(c *gin.Context) {
 	if err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error([]string{"Org list not found", "Байгууллагын жагсаалт буруу байна"}, err),
+			utils.Error([]string{"Org list not found", " жагсаалт буруу байна"}, err),
 		)
 		return
 	}
 
 	c.JSON(
 		200,
-		utils.Success([]string{"Org list", "Байгууллагын жагсаалт"}, orgs),
+		utils.Success([]string{"Org list", " жагсаалт"}, orgs),
 	)
 }
