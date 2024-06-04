@@ -1,4 +1,4 @@
-package mock
+package main
 
 import (
 	"fmt"
@@ -13,6 +13,14 @@ import (
 func main() {
 
 	config.ConnectDatabase()
+
+	if err := mockSysUser(); err != nil {
+		fmt.Println(" error mock sys user : ", err)
+	}
+
+	if err := mockOrgAndUser(); err != "" {
+		fmt.Println(" error mock user : ", err)
+	}
 
 }
 
