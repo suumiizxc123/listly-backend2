@@ -13,6 +13,6 @@ func ArtistBandCombinationRoute(r *gin.RouterGroup) {
 		artistBandCombinationRoute.GET("/", artist_handler.GetArtistBandCombinationList)
 		artistBandCombinationRoute.GET("/by-id", artist_handler.GetArtistBandCombination)
 		artistBandCombinationRoute.DELETE("/by-id", artist_handler.DeleteArtistBandCombination)
-		artistBandCombinationRoute.PATCH("/", artist_handler.DeleteArtistBandCombination)
+		artistBandCombinationRoute.PATCH("/", artist_handler.UpdateArtistBandCombination)
 	}
 }

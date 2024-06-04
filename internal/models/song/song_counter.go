@@ -18,8 +18,8 @@ func (c *SongCounter) Create() error {
 }
 
 func (c *SongCounter) Update() error {
-	// return config.DB.Updates(c).Error
-	return config.DB.Where("id = ?", c.ID).First(c).Error
+	return config.DB.Updates(c).Error
+	// return config.DB.Where("id = ?", c.ID).First(c).Error
 }
 
 func (c *SongCounter) Delete() error {

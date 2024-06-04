@@ -16,7 +16,7 @@ func CreateSongCounter(c *gin.Context) {
 	if err := c.ShouldBindJSON(&song); err != nil {
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error([]string{"Song fields required", "Дууны мэдээлэл дутуу байна"}, err),
+			utils.Error([]string{"fields required", "Дууны мэдээлэл дутуу байна"}, err),
 		)
 		return
 	}
@@ -24,12 +24,12 @@ func CreateSongCounter(c *gin.Context) {
 	if err = song.Create(); err != nil {
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error([]string{"Song creation failed", "Дууны мэдээлэл хадгалахад алдаа үүслээ"}, err),
+			utils.Error([]string{"creation failed", "Дууны мэдээлэл хадгалахад алдаа үүслээ"}, err),
 		)
 		return
 	}
 
-	c.JSON(http.StatusCreated, utils.Success([]string{"Song created", "Дууны мэдээлэл хадгаллаа"}, song))
+	c.JSON(http.StatusCreated, utils.Success([]string{"created", "Дууны мэдээлэл хадгаллаа"}, song))
 }
 
 // bayaraa number 99267774
@@ -40,7 +40,7 @@ func UpdateSongCounter(c *gin.Context) {
     if err := c.ShouldBindJSON(&song); err != nil {
         c.JSON(
             http.StatusBadRequest,
-            utils.Error([]string{"Song fields required", "Дууны мэдээлэл дутуу байна"}, err),
+            utils.Error([]string{"fields required", "Дууны мэдээлэл дутуу байна"}, err),
         )
         return
     }
@@ -48,12 +48,12 @@ func UpdateSongCounter(c *gin.Context) {
     if err = song.Update(); err != nil {
         c.JSON(
             http.StatusInternalServerError,
-            utils.Error([]string{"Song update failed", "Дууны мэдээлэл хадгалахад алдаа үүслээ"}, err),
+            utils.Error([]string{"update failed", "Дууны мэдээлэл хадгалахад алдаа үүслээ"}, err),
         )
         return
     }
 
-    c.JSON(200, utils.Success([]string{"Song updated", "Дууны мэдээлэл хадгаллаа"}, song))
+    c.JSON(200, utils.Success([]string{"updated", "Дууны мэдээлэл хадгаллаа"}, song))
 }
 
 func GetSongCounter(c *gin.Context) {
@@ -66,7 +66,7 @@ func GetSongCounter(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error([]string{"Song id required", "Дууны id мэдээлэл дутуу байна"}, "id must be required"),
+			utils.Error([]string{"id required", "Дууны id мэдээлэл дутуу байна"}, "id must be required"),
 		)
 
 		return
@@ -78,7 +78,7 @@ func GetSongCounter(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error([]string{"Song id cannot be parsed", "Дууны id буруу байна"}, err.Error()),
+			utils.Error([]string{"id cannot be parsed", "Дууны id буруу байна"}, err.Error()),
 		)
 
 		return
@@ -88,13 +88,13 @@ func GetSongCounter(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error([]string{"Song not found", "Дуу олдсонгүй"}, err.Error()),
+			utils.Error([]string{"not found", "Дуу олдсонгүй"}, err.Error()),
 		)
 
 		return
 	}
 
-	c.JSON(200, utils.Success([]string{"Song found", "Дууны мэдээлэл олдлоо"}, song))
+	c.JSON(200, utils.Success([]string{"found", "Дууны мэдээлэл олдлоо"}, song))
 }
 
 func DeleteSongCounter(c *gin.Context) {
@@ -108,7 +108,7 @@ func DeleteSongCounter(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error([]string{"Song id required", "Дууны id мэдээлэл дутуу байна"}, "id must be required"),
+			utils.Error([]string{"id required", "Дууны id мэдээлэл дутуу байна"}, "id must be required"),
 		)
 
 		return
@@ -120,7 +120,7 @@ func DeleteSongCounter(c *gin.Context) {
 
 		c.JSON(
 			http.StatusBadRequest,
-			utils.Error([]string{"Song id cannot be parsed", "Дууны id буруу байна"}, err.Error()),
+			utils.Error([]string{"id cannot be parsed", "Дууны id буруу байна"}, err.Error()),
 		)
 
 		return
@@ -130,13 +130,13 @@ func DeleteSongCounter(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error([]string{"Song delete failed", "Дуу устгаж чадсангүй"}, err.Error()),
+			utils.Error([]string{"delete failed", "Дуу устгаж чадсангүй"}, err.Error()),
 		)
 
 		return
 	}
 
-	c.JSON(200, utils.Success([]string{"Song deleted", "Дууны мэдээлэл устгагдлаа"}, struct{}{}))
+	c.JSON(200, utils.Success([]string{"deleted", "Дууны мэдээлэл устгагдлаа"}, struct{}{}))
 }
 
 func GetSongCounterList(c *gin.Context) {
@@ -148,11 +148,11 @@ func GetSongCounterList(c *gin.Context) {
 
 		c.JSON(
 			http.StatusInternalServerError,
-			utils.Error([]string{"Song list not found", "Дуу олдсонгүй"}, err.Error()),
+			utils.Error([]string{"list not found", "Дуу олдсонгүй"}, err.Error()),
 		)
 
 		return
 	}
 
-	c.JSON(200, utils.Success([]string{"Song list", "Дууны жагсаалт"}, songs))
+	c.JSON(200, utils.Success([]string{"list", "Дууны жагсаалт"}, songs))
 }
