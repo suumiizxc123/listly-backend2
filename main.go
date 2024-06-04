@@ -66,5 +66,5 @@ func main() {
 	// moscap_route.MoscapUserRoute(v1)
 	// moscap_route.MoscapUserLogRoute(v1)
 
-	r.Run()
+	r.Run(":8080")
 }
