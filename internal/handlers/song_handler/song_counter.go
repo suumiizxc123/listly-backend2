@@ -34,28 +34,26 @@ func CreateSongCounter(c *gin.Context) {
 
 // bayaraa number 99267774
 func UpdateSongCounter(c *gin.Context) {
-	var song song.SongCounter
-	var err error
+    var song song.SongCounter
+    var err error
 
-	if err := c.ShouldBindJSON(&song); err != nil {
+    if err := c.ShouldBindJSON(&song); err != nil {
+        c.JSON(
+            http.StatusBadRequest,
+            utils.Error([]string{"Song fields required", "Дууны мэдээлэл дутуу байна"}, err),
+        )
+        return
+    }
 
-		c.JSON(
-			http.StatusBadRequest,
-			utils.Error([]string{"Song fields required", "Дууны мэдээлэл дутуу байна"}, err),
-		)
-		return
-	}
+    if err = song.Update(); err != nil {
+        c.JSON(
+            http.StatusInternalServerError,
+            utils.Error([]string{"Song update failed", "Дууны мэдээлэл хадгалахад алдаа үүслээ"}, err),
+        )
+        return
+    }
 
-	if err = song.Update(); err != nil {
-		c.JSON(
-			http.StatusInternalServerError,
-			utils.Error([]string{"Song update failed", "Дууны мэдээлэл хадгалахад алдаа үүслээ"}, err),
-		)
-		return
-	}
-
-	c.JSON(200, utils.Success([]string{"Song updated", "Дууны мэдээлэл хадгаллаа"}, song))
-
+    c.JSON(200, utils.Success([]string{"Song updated", "Дууны мэдээлэл хадгаллаа"}, song))
 }
 
 func GetSongCounter(c *gin.Context) {
