@@ -44,11 +44,6 @@ func GenerateOTP(c *gin.Context) {
 	client.IsActive = 0
 	client.OTPExpire = time.Now().Add(5 * time.Minute)
 
-	if err := client.GetByPhone(data.Phone); err == nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Phone already registered", "message": "Phone already registered"})
-		return
-	}
-
 	if err := client.Create(); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error(), "message": "Failed to create client phone and otp"})
 		return

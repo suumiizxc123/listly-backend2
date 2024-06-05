@@ -1,6 +1,7 @@
 module kcloudb1
 
-go 1.20
+go 1.22.1
+
 require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-redis/redis v6.15.9+incompatible

@@ -12,7 +12,6 @@ docker service scale kcloudstack_app=5
 
 //////////////////////////////////////
 
-docker build -t suumiizxc0519/kcloudimage:v1 .
-
-docker push suumiizxc0519/kcloudimage:v1
+docker build -t suumiizxc0519/onegram:v1.0.1 .
+docker push suumiizxc0519/onegram:v1.0.1
 
