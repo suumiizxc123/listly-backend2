@@ -2,23 +2,24 @@ package client_handler
 
 import (
 	"fmt"
+	"kcloudb1/internal/config"
+	"kcloudb1/internal/middleware"
 	"kcloudb1/internal/models/client"
+	"kcloudb1/internal/utils"
 	"math/rand"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 func SendOTP(phone, message string) error {
 
-	url := fmt.Sprintf("https://api.messagepro.mn/send?to=%v&from=72022001&text=%v", phone, message)
+	url := fmt.Sprintf("https://api.messagepro.mn/send?to=%v&from=72887388&text=%v", phone, message)
 
 	req, _ := http.NewRequest("GET", url, nil)
 
-	req.Header.Add("User-Agent", "insomnia/9.2.0")
-	req.Header.Add("x-api-key", "e6d4f2ca52e24896f3f238be8df4fbc8")
+	req.Header.Add("x-api-key", "e15b92d6da557174aeb74b29f5243f77")
 
 	_, err := http.DefaultClient.Do(req)
 	return err
@@ -29,10 +30,11 @@ func GenerateOTP(c *gin.Context) {
 		Phone string `json:"phone"`
 	}
 
-	var client client.Client
-
+	var client, clientprev client.Client
+	var resp utils.Response
 	if err := c.ShouldBindJSON(&data); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		resp = utils.Error([]string{"Failed to bind json", "Алдаа гарлаа"}, err)
+		c.JSON(http.StatusBadRequest, resp)
 		return
 	}
 
@@ -41,22 +43,35 @@ func GenerateOTP(c *gin.Context) {
 
 	client.Phone = data.Phone
 	client.OTP = otp
-	client.IsActive = 0
 	client.OTPExpire = time.Now().Add(5 * time.Minute)
 
-	if err := client.Create(); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error(), "message": "Failed to create client phone and otp"})
-		return
+	if err := clientprev.GetByPhone(data.Phone); err != nil {
+		fmt.Println("err", err)
+		if err := client.Create(); err != nil {
+			resp = utils.Error([]string{"Failed to create client phone and otp", "Алдаа гарлаа"}, err)
+			c.JSON(http.StatusInternalServerError, resp)
+			return
+		}
+
+	} else {
+		client.ID = clientprev.ID
+		if err := client.Update(); err != nil {
+			resp = utils.Error([]string{"Failed to update client phone and otp", "Алдаа гарлаа"}, err)
+			c.JSON(http.StatusInternalServerError, resp)
+			return
+		}
 	}
 
 	err := SendOTP(data.Phone, otp)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error(), "message": "Failed to send otp"})
+		resp = utils.Error([]string{"Failed to send otp", "Алдаа гарлаа"}, err)
+		c.JSON(http.StatusInternalServerError, resp)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "OTP sent"})
+	resp = utils.Success([]string{"Success to send otp", "Амжилттай"}, nil)
+	c.JSON(http.StatusOK, resp)
 }
 
 func VerifyOTP(c *gin.Context) {
@@ -66,48 +81,49 @@ func VerifyOTP(c *gin.Context) {
 	}
 
 	var client client.Client
-
+	var resp utils.Response
 	if err := c.ShouldBindJSON(&data); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		resp = utils.Error([]string{"Failed to bind json", "Алдаа гарлаа"}, err)
+		c.JSON(http.StatusBadRequest, resp)
 		return
 	}
 
 	client.Phone = data.Phone
 
 	if err := client.GetByPhone(data.Phone); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		resp = utils.Error([]string{"Failed to get client by phone", "Алдаа гарлаа"}, err)
+		c.JSON(http.StatusInternalServerError, resp)
 		return
 	}
 
 	if client.OTP != data.Otp {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid OTP", "message": "Invalid OTP"})
+		resp = utils.Error([]string{"Invalid OTP", "Алдаа гарлаа"}, fmt.Errorf("Invalid OTP"))
+		c.JSON(http.StatusBadRequest, resp)
 		return
 	}
 
 	if client.OTPExpire.Before(time.Now()) {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "OTP expired", "message": "OTP expired"})
+		resp = utils.Error([]string{"OTP expired", "Алдаа гарлаа"}, fmt.Errorf("OTP expired"))
+		c.JSON(http.StatusBadRequest, resp)
 		return
 	}
 
-	if client.IsActive == 1 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "OTP already verified", "message": "OTP already verified"})
-		return
-	}
-
-	client.OTP = uuid.NewString()
+	client.OTP = ""
 	client.IsActive = 1
 
 	if err := client.Update(); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		resp = utils.Error([]string{"Failed to update client active status", "Алдаа гарлаа"}, err)
+		c.JSON(http.StatusInternalServerError, resp)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "OTP verified", "token": client.OTP})
+	resp = utils.Success([]string{"Success to verify otp", "Амжилттай"}, nil)
+	c.JSON(http.StatusOK, resp)
 }
 
 func Register(c *gin.Context) {
 	var data struct {
-		Token     string `json:"token"`
+		Phone     string `json:"phone"`
 		Password  string `json:"password"`
 		Pin       string `json:"pin"`
 		Firstname string `json:"first_name"`
@@ -115,21 +131,22 @@ func Register(c *gin.Context) {
 	}
 
 	var client client.Client
-
+	var resp utils.Response
 	if err := c.ShouldBindJSON(&data); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		resp = utils.Error([]string{"Failed to bind json", "Алдаа гарлаа"}, err)
+		c.JSON(http.StatusBadRequest, resp)
 		return
 	}
 
-	client.OTP = data.Token
-
-	if err := client.GetByOTP(data.Token); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	if err := client.GetByPhone(data.Phone); err != nil {
+		resp = utils.Error([]string{"Failed to get client by phone", "Алдаа гарлаа"}, err)
+		c.JSON(http.StatusInternalServerError, resp)
 		return
 	}
 
 	if client.IsRegistered == 1 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Phone already registered", "message": "Phone already registered"})
+		resp = utils.Error([]string{"Phone already registered", "Алдаа гарлаа"}, nil)
+		c.JSON(http.StatusBadRequest, resp)
 		return
 	}
 
@@ -140,12 +157,13 @@ func Register(c *gin.Context) {
 	client.IsRegistered = 1
 
 	if err := client.Update(); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		resp = utils.Error([]string{"Failed to update client", "Алдаа гарлаа"}, err)
+		c.JSON(http.StatusInternalServerError, resp)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Register successful"})
-
+	resp = utils.Success([]string{"Success to register", "Амжилттай"}, nil)
+	c.JSON(http.StatusOK, resp)
 }
 
 func LoginByPassword(c *gin.Context) {
@@ -154,40 +172,68 @@ func LoginByPassword(c *gin.Context) {
 		Password string `json:"password"`
 	}
 
-	var client client.Client
+	var clientd client.Client
+	var clientOutput client.ClientOutput
+	var resp utils.Response
 
 	if err := c.ShouldBindJSON(&data); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		resp = utils.Error([]string{"Failed to bind json", "Алдаа гарлаа"}, err)
+		c.JSON(http.StatusBadRequest, resp)
 		return
 	}
 
-	client.Phone = data.Phone
-	client.Password = data.Password
+	clientd.Phone = data.Phone
+	clientd.Password = data.Password
 
-	if err := client.GetByPhone(data.Phone); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	if err := clientd.GetByPhone(data.Phone); err != nil {
+		resp = utils.Error([]string{"Failed to get client by phone", "Алдаа гарлаа"}, err)
+		c.JSON(http.StatusInternalServerError, resp)
 		return
 	}
 
-	if client.IsRegistered == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Phone not registered", "message": "Phone not registered"})
+	if clientd.IsRegistered == 0 {
+		resp = utils.Error([]string{"Phone not registered", "Алдаа гарлаа"}, fmt.Errorf("Phone not registered"))
+		c.JSON(http.StatusBadRequest, resp)
 		return
 	}
 
-	if client.Password != data.Password {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid password", "message": "Invalid password"})
+	if clientd.Password != data.Password {
+		resp = utils.Error([]string{"Invalid password", "Алдаа гарлаа"}, fmt.Errorf("Invalid password"))
+		c.JSON(http.StatusBadRequest, resp)
 		return
 	}
 
-	token := uuid.NewString()
+	token, err := middleware.CreateToken(clientd.ID)
 
-	client.Token = token
-
-	if err := client.Update(); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	if err != nil {
+		resp = utils.Error([]string{"Failed to create token", "Алдаа гарлаа"}, err)
+		c.JSON(http.StatusInternalServerError, resp)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Login successful", "token": token})
+	result := config.RS.Set("token:"+token, clientd.ID, 0)
+
+	if result.Err() != nil {
+		resp = utils.Error([]string{"Failed to create token", "Алдаа гарлаа"}, result.Err())
+		c.JSON(http.StatusInternalServerError, resp)
+		return
+	}
+
+	if err := clientd.Update(); err != nil {
+		resp = utils.Error([]string{"Failed to update client", "Алдаа гарлаа"}, err)
+		c.JSON(http.StatusInternalServerError, resp)
+		return
+	}
+
+	clientOutput.ID = clientd.ID
+	clientOutput.FirstName = clientd.FirstName
+	clientOutput.LastName = clientd.LastName
+	clientOutput.Phone = clientd.Phone
+	clientOutput.IsActive = clientd.IsActive
+	clientOutput.IsRegistered = clientd.IsRegistered
+	clientOutput.CreatedAt = clientd.CreatedAt
+
+	resp = utils.Success([]string{"Success to login", "Амжилттай"}, clientOutput)
+	c.JSON(http.StatusOK, resp)
 
 }

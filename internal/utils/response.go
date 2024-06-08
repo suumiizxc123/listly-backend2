@@ -20,7 +20,6 @@ func Success(message []string, data interface{}) Response {
 		Message: Message{
 			English:   message[0],
 			Mongolian: message[1],
-			Chinese:   "",
 		},
 		Errors: nil,
 		Data:   data,
@@ -34,7 +33,6 @@ func Error(message []string, errors interface{}) Response {
 		Message: Message{
 			English:   message[0],
 			Mongolian: message[1],
-			Chinese:   "",
 		},
 		Errors: errors,
 		Data:   nil,

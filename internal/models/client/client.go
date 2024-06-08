@@ -29,7 +29,7 @@ func (c *Client) Create() error {
 }
 
 func (c *Client) Update() error {
-	return config.DB.Save(c).Error
+	return config.DB.Updates(c).Error
 }
 
 func (c *Client) Delete() error {
@@ -52,4 +52,14 @@ func (c *Client) GetByPhone(phone string) error {
 
 func (c *Client) GetByOTP(otp string) error {
 	return config.DB.Where("otp = ?", otp).First(c).Error
+}
+
+type ClientOutput struct {
+	ID           int64     `json:"ID"`
+	Phone        string    `json:"phone"`
+	IsActive     int64     `json:"is_active"`
+	IsRegistered int64     `json:"is_registered"`
+	FirstName    string    `json:"first_name"`
+	LastName     string    `json:"last_name"`
+	CreatedAt    time.Time `json:"created_at"`
 }

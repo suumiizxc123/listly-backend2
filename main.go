@@ -39,35 +39,5 @@ func main() {
 
 	client_route.ClientRoute(v1)
 
-	// user_route.SysUserRoute(v1)
-	// user_route.UserRoute(v1)
-	// user_route.ServiceLogRoute(v1)
-
-	// song_route.SongRoute(v1)
-	// song_route.SongCategoryRoute(v1)
-	// song_route.SongCategoryCombinationRoute(v1)
-	// song_route.SongCounterRoute(v1)
-	// song_route.SongLanguageRoute(v1)
-
-	// org_route.OrgRoute(v1)
-	// org_route.OrgSysRoute(v1)
-	// org_route.OrgUserRoute(v1)
-	// org_route.OrgAccountRoute(v1)
-	// org_route.OrgAccountTxnRoute(v1)
-	// org_route.OrgAccountTxnLogRoute(v1)
-
-	// common_route.LanguageRoute(v1)
-
-	// artist_route.ArtistTypeRoute(v1)
-	// artist_route.ArtistSongRoute(v1)
-	// artist_route.ArtistProfileRoute(v1)
-	// artist_route.ArtistMemberRoute(v1)
-	// artist_route.ArtistMemberSongRoute(v1)
-	// artist_route.ArtistBandRoute(v1)
-	// artist_route.ArtistBandCombinationRoute(v1)
-
-	// moscap_route.MoscapUserRoute(v1)
-	// moscap_route.MoscapUserLogRoute(v1)
-
 	r.Run(":8080")
 }
