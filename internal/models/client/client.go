@@ -21,7 +21,7 @@ type Client struct {
 }
 
 func (c *Client) TableName() string {
-	return "client"
+	return "one_client"
 }
 
 func (c *Client) Create() error {
@@ -37,7 +37,7 @@ func (c *Client) Delete() error {
 }
 
 func (c *Client) Get() error {
-	return config.DB.First(c).Error
+	return config.DB.First(c, c.ID).Error
 }
 
 func (c *Client) GetAll() ([]Client, error) {

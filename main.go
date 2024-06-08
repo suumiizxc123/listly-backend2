@@ -3,6 +3,7 @@ package main
 import (
 	"kcloudb1/internal/config"
 	"kcloudb1/internal/routes/client_route"
+	"kcloudb1/internal/routes/metal_route"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -37,6 +38,7 @@ func main() {
 
 	v1 := r.Group("/api/v1")
 
+	metal_route.MetalRoute(v1)
 	client_route.ClientRoute(v1)
 
 	r.Run(":8080")
