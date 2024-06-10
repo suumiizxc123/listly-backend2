@@ -9,10 +9,11 @@ import (
 
 var secretKey = []byte("secret")
 
-func CreateToken(clientID int64) (string, error) {
+func CreateToken(clientID int64, tokenStr string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
 		jwt.MapClaims{
 			"clientID": clientID,
+			"token":    tokenStr,
 			"exp":      time.Now().Add(time.Hour * 24).Unix(),
 		})
 
@@ -20,7 +21,6 @@ func CreateToken(clientID int64) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
 	return tokenString, nil
 }
 

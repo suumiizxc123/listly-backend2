@@ -4,6 +4,7 @@ import (
 	"kcloudb1/internal/config"
 	"kcloudb1/internal/routes/client_route"
 	"kcloudb1/internal/routes/metal_route"
+	"kcloudb1/internal/routes/order_route"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -40,6 +41,8 @@ func main() {
 
 	metal_route.MetalRoute(v1)
 	client_route.ClientRoute(v1)
+
+	order_route.OrderRoute(v1)
 
 	r.Run(":8080")
 }

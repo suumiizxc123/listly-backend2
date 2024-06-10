@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 func SendOTP(phone, message string) error {
@@ -203,15 +204,9 @@ func LoginByPassword(c *gin.Context) {
 		return
 	}
 
-	token, err := middleware.CreateToken(clientd.ID)
+	token := uuid.NewString()
 
-	if err != nil {
-		resp = utils.Error([]string{"Failed to create token", "Алдаа гарлаа"}, err)
-		c.JSON(http.StatusInternalServerError, resp)
-		return
-	}
-
-	result := config.RS.Set("token:"+token, clientd.ID, 0)
+	result := config.RS.Set(token, fmt.Sprintf("%d", clientd.ID), 0)
 
 	if result.Err() != nil {
 		resp = utils.Error([]string{"Failed to create token", "Алдаа гарлаа"}, result.Err())
@@ -219,8 +214,10 @@ func LoginByPassword(c *gin.Context) {
 		return
 	}
 
-	if err := clientd.Update(); err != nil {
-		resp = utils.Error([]string{"Failed to update client", "Алдаа гарлаа"}, err)
+	tokenJWT, err := middleware.CreateToken(clientd.ID, token)
+
+	if err != nil {
+		resp = utils.Error([]string{"Failed to create token", "Алдаа гарлаа"}, err)
 		c.JSON(http.StatusInternalServerError, resp)
 		return
 	}
@@ -232,6 +229,7 @@ func LoginByPassword(c *gin.Context) {
 	clientOutput.IsActive = clientd.IsActive
 	clientOutput.IsRegistered = clientd.IsRegistered
 	clientOutput.CreatedAt = clientd.CreatedAt
+	clientOutput.Token = tokenJWT
 
 	resp = utils.Success([]string{"Success to login", "Амжилттай"}, clientOutput)
 	c.JSON(http.StatusOK, resp)

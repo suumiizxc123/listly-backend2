@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"fmt"
+	"kcloudb1/internal/config"
 	"kcloudb1/internal/utils"
 	"net/http"
 	"strings"
@@ -53,13 +55,20 @@ func Auth() gin.HandlerFunc {
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, utils.Error(
 				[]string{"Unauthorized", "Нэвтрээгүй байна"},
-				"Unauthorized",
+				err.Error(),
 			))
 			c.Abort()
 			return
 		}
 
-		c.Set("claims", claims)
+		// clientID := claims["clientID"].(int64)
+		tokenString := claims["token"].(string)
+		fmt.Sprintln("Token string:", tokenString)
+
+		clientIDStr, _ := config.RS.Get(tokenString).Result()
+
+		fmt.Println("Client ID:", clientIDStr)
+		c.Set("clientID", clientIDStr)
 
 		c.Next()
 	}
