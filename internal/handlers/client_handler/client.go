@@ -18,11 +18,19 @@ func SendOTP(phone, message string) error {
 
 	url := fmt.Sprintf("https://api.messagepro.mn/send?to=%v&from=72887388&text=%v", phone, message)
 
+	fmt.Println("url", url)
 	req, _ := http.NewRequest("GET", url, nil)
 
 	req.Header.Add("x-api-key", "e15b92d6da557174aeb74b29f5243f77")
 
-	_, err := http.DefaultClient.Do(req)
+	resp, err := http.DefaultClient.Do(req)
+
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	fmt.Println("response Status:", resp)
 	return err
 }
 
@@ -63,7 +71,7 @@ func GenerateOTP(c *gin.Context) {
 		}
 	}
 
-	err := SendOTP(data.Phone, fmt.Sprintf("Нэвтрэх код: %v", otp))
+	err := SendOTP(data.Phone, fmt.Sprintf("Нэвтрэх%%20код:%s", otp))
 
 	if err != nil {
 		resp = utils.Error([]string{"Failed to send otp", "Алдаа гарлаа"}, err)
