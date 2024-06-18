@@ -63,7 +63,7 @@ func GenerateOTP(c *gin.Context) {
 		}
 	}
 
-	err := SendOTP(data.Phone, otp)
+	err := SendOTP(data.Phone, fmt.Sprintf("Нэвтрэх код: %v", otp))
 
 	if err != nil {
 		resp = utils.Error([]string{"Failed to send otp", "Алдаа гарлаа"}, err)
@@ -167,6 +167,44 @@ func Register(c *gin.Context) {
 	c.JSON(http.StatusOK, resp)
 }
 
+func CheckToken(c *gin.Context) {
+	var token = c.Query("token")
+
+	if token == "" {
+		c.JSON(http.StatusUnauthorized, utils.Error(
+			[]string{"Unauthorized", "Нэвтрээгүй байна"},
+			"Unauthorized",
+		))
+		c.Abort()
+		return
+	}
+
+	claims, err := middleware.VerifyToken(token)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, utils.Error(
+			[]string{"Unauthorized", "Нэвтрээгүй байна"},
+			err.Error(),
+		))
+		c.Abort()
+		return
+	}
+
+	fmt.Println("exp : ", claims["exp"].(float64))
+
+	tokenExpire := time.Unix(int64(claims["exp"].(float64)), 0)
+	if time.Now().After(tokenExpire) {
+		c.JSON(http.StatusUnauthorized, utils.Error(
+			[]string{"Unauthorized", "Нэвтрээгүй байна"},
+			"Unauthorized",
+		))
+		c.Abort()
+		return
+	}
+
+	c.JSON(http.StatusOK, utils.Success([]string{"Success to check token", "Амжилттай"}, nil))
+
+}
+
 func LoginByPassword(c *gin.Context) {
 	var data struct {
 		Phone    string `json:"phone"`
@@ -234,4 +272,120 @@ func LoginByPassword(c *gin.Context) {
 	resp = utils.Success([]string{"Success to login", "Амжилттай"}, clientOutput)
 	c.JSON(http.StatusOK, resp)
 
+}
+
+func ForgotPassword(c *gin.Context) {
+	var input struct {
+		Phone string `json:"phone"`
+	}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, utils.Error([]string{"Failed to bind json", "Алдаа гарлаа"}, err))
+		return
+	}
+
+	otp := fmt.Sprintf("%d", 1000+rand.Intn(8999))
+
+	client := client.Client{Phone: input.Phone}
+
+	if err := client.GetByPhone(input.Phone); err != nil {
+		c.JSON(http.StatusInternalServerError, utils.Error([]string{"Failed to get client by phone", "Алдаа гарлаа"}, err))
+		return
+	}
+
+	if client.IsRegistered == 0 {
+		c.JSON(http.StatusBadRequest, utils.Error([]string{"Phone not registered", "Алдаа гарлаа"}, fmt.Errorf("Phone not registered")))
+		return
+	}
+
+	client.OTP = otp
+	client.OTPExpire = time.Now().Add(5 * time.Minute)
+
+	if err := client.Update(); err != nil {
+		c.JSON(http.StatusInternalServerError, utils.Error([]string{"Failed to save otp", "Алдаа гарлаа"}, err))
+		return
+	}
+
+	if err := client.Update(); err != nil {
+		c.JSON(http.StatusInternalServerError, utils.Error([]string{"Failed to update otp", "Алдаа гарлаа"}, err))
+		return
+	}
+
+	if err := SendOTP(input.Phone, otp); err != nil {
+		c.JSON(http.StatusInternalServerError, utils.Error([]string{"Failed to send otp", "Алдаа гарлаа"}, err))
+		return
+	}
+
+	c.JSON(http.StatusOK, utils.Success([]string{"Success to send otp", "Амжилттай"}, nil))
+}
+
+func VerifyOTPChangePassword(c *gin.Context) {
+	var input struct {
+		Phone    string `json:"phone"`
+		Otp      string `json:"otp"`
+		Password string `json:"password"`
+	}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, utils.Error([]string{"Failed to bind json", "Алдаа гарлаа"}, err))
+		return
+	}
+
+	client := client.Client{Phone: input.Phone}
+	if err := client.GetByPhone(input.Phone); err != nil {
+		c.JSON(http.StatusInternalServerError, utils.Error([]string{"Failed to get client by phone", "Алдаа гарлаа"}, err))
+		return
+	}
+
+	if client.OTP != input.Otp {
+		c.JSON(http.StatusBadRequest, utils.Error([]string{"Invalid OTP", "Алдаа гарлаа"}, fmt.Errorf("Invalid OTP")))
+		return
+	}
+
+	if client.OTPExpire.Before(time.Now()) {
+		c.JSON(http.StatusBadRequest, utils.Error([]string{"OTP expired", "Алдаа гарлаа"}, fmt.Errorf("OTP expired")))
+		return
+	}
+
+	client.Password = input.Password
+	if err := client.Update(); err != nil {
+		c.JSON(http.StatusInternalServerError, utils.Error([]string{"Failed to update password", "Алдаа гарлаа"}, err))
+		return
+	}
+
+	c.JSON(http.StatusOK, utils.Success([]string{"Success to change password", "Амжилттай"}, nil))
+
+}
+
+func ChangePassword(c *gin.Context) {
+
+	var input struct {
+		Phone       string `json:"phone"`
+		Password    string `json:"password"`
+		NewPassword string `json:"new_password"`
+	}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, utils.Error([]string{"Failed to bind json", "Алдаа гарлаа"}, err))
+		return
+	}
+
+	client := client.Client{Phone: input.Phone}
+	if err := client.GetByPhone(input.Phone); err != nil {
+		c.JSON(http.StatusInternalServerError, utils.Error([]string{"Failed to get client by phone", "Алдаа гарлаа"}, err))
+		return
+	}
+
+	if input.Password != client.Password {
+		c.JSON(http.StatusBadRequest, utils.Error([]string{"Invalid password", "Алдаа гарлаа"}, fmt.Errorf("Invalid password")))
+		return
+	}
+
+	client.Password = input.NewPassword
+	if err := client.Update(); err != nil {
+		c.JSON(http.StatusInternalServerError, utils.Error([]string{"Failed to update password", "Алдаа гарлаа"}, err))
+		return
+	}
+
+	c.JSON(http.StatusOK, utils.Success([]string{"Success to change password", "Амжилттай"}, nil))
 }

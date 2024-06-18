@@ -61,7 +61,6 @@ func Auth() gin.HandlerFunc {
 			return
 		}
 
-		// clientID := claims["clientID"].(int64)
 		tokenString := claims["token"].(string)
 		fmt.Sprintln("Token string:", tokenString)
 
