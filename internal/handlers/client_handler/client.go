@@ -71,7 +71,7 @@ func GenerateOTP(c *gin.Context) {
 		}
 	}
 
-	err := SendOTP(data.Phone, fmt.Sprintf("Нэвтрэх%%20код:%s", otp))
+	err := SendOTP(data.Phone, fmt.Sprintf("Nevtreh%%20code:%s", otp))
 
 	if err != nil {
 		resp = utils.Error([]string{"Failed to send otp", "Алдаа гарлаа"}, err)
