@@ -65,14 +65,14 @@ func GenerateOTP(c *gin.Context) {
 	} else {
 
 		if clientprev.IsRegistered == 1 {
-			resp = utils.Error([]string{"Phone already registered", "Алдаа гарлаа"}, fmt.Errorf("Phone already registered"))
+			resp = utils.Error([]string{"Phone already registered", "Бүртгэлтэй хэрэглэгч байна"}, fmt.Errorf("Phone already registered"))
 			c.JSON(http.StatusBadRequest, resp)
 			return
 		}
 
 		client.ID = clientprev.ID
 		if err := client.Update(); err != nil {
-			resp = utils.Error([]string{"Failed to update client phone and otp", "Алдаа гарлаа"}, err)
+			resp = utils.Error([]string{"Failed to update client phone and otp", "Нэг удаагын код үүсгэхэд алдаа гарлаа"}, err)
 			c.JSON(http.StatusInternalServerError, resp)
 			return
 		}
