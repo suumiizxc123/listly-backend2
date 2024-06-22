@@ -28,6 +28,7 @@ func GetBalance(c *gin.Context) {
 		return
 	}
 
+	balout.ID = bal.ID
 	balout.ClientID = bal.ClientID
 	balout.MetalID = bal.MetalID
 	balout.Quantity = bal.Quantity
