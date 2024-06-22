@@ -1,9 +1,12 @@
 package metal
 
 import (
+	"errors"
 	"fmt"
 	"kcloudb1/internal/config"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 type MetalRate struct {
@@ -81,4 +84,20 @@ func (m *MetalRate) GetAll() ([]MetalRate, error) {
 	var metalRates []MetalRate
 	err := config.DB.Find(&metalRates).Error
 	return metalRates, err
+}
+
+func (m *MetalRate) ExistDate(date string) (bool, error) {
+	if config.DB == nil {
+		return false, fmt.Errorf("database connection is not established")
+	}
+
+	var metalRate MetalRate
+
+	if err := config.DB.Where("date = to_date(?, 'YYYY-MM-DD')", date).First(&metalRate).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return false, nil
+		}
+		return false, err
+	}
+	return true, nil
 }
