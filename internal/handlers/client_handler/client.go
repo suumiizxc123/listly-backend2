@@ -5,6 +5,7 @@ import (
 	"kcloudb1/internal/config"
 	"kcloudb1/internal/middleware"
 	"kcloudb1/internal/models/client"
+	"kcloudb1/internal/models/order"
 	"kcloudb1/internal/utils"
 	"math/rand"
 	"net/http"
@@ -177,6 +178,16 @@ func Register(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, resp)
 		return
 	}
+
+	// create balance
+
+	var balance order.Balance
+	balance.ClientID = client.ID
+	balance.MetalID = 1
+	balance.Quantity = 0
+	balance.CreatedAt = time.Now()
+
+	_ = balance.Create()
 
 	resp = utils.Success([]string{"Success to register", "Амжилттай"}, nil)
 	c.JSON(http.StatusOK, resp)

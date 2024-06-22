@@ -9,7 +9,6 @@ type Balance struct {
 	ID        int64     `json:"ID"`
 	ClientID  int64     `json:"user_id"`
 	MetalID   int64     `json:"metal_id"`
-	Balance   float32   `json:"balance"`
 	Quantity  float32   `json:"quantity"`
 	CreatedAt time.Time `json:"created_at"`
 }
@@ -40,8 +39,17 @@ func (b *Balance) GetAll() ([]Balance, error) {
 	return balances, err
 }
 
-func (b *Balance) GetByClientAndMetalID(clientID int64, metalID int64) ([]Balance, error) {
-	var balances []Balance
-	err := config.DB.Where("client_id = ?", clientID).Where("metal_id = ?", metalID).Find(&balances).Error
-	return balances, err
+func (b *Balance) GetByClientAndMetalID(clientID any, metalID int64) error {
+	err := config.DB.Where("client_id = ?", clientID).Where("metal_id = ?", metalID).Find(&b).Error
+	return err
+}
+
+type BalanceResponse struct {
+	ID        int64     `json:"ID"`
+	ClientID  int64     `json:"user_id"`
+	MetalID   int64     `json:"metal_id"`
+	Quantity  float32   `json:"quantity"`
+	Balance   float32   `json:"balance"`
+	Changes   float32   `json:"changes"`
+	CreatedAt time.Time `json:"created_at"`
 }

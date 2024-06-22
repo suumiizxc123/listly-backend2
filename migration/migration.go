@@ -18,5 +18,7 @@ func main() {
 		metal.MetalRate{},
 		order.Order{},
 		order.OrderPayment{},
+		order.Balance{},
+		order.BalanceHistory{},
 	)
 }

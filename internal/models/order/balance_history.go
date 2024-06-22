@@ -30,8 +30,8 @@ func (b *BalanceHistory) Delete() error {
 	return config.DB.Delete(b).Error
 }
 
-func (b *BalanceHistory) GetByClientAndMetalID(clientID int64, metalID int64) ([]BalanceHistory, error) {
+func (b *BalanceHistory) GetByClientAndMetalID(clientID any, metalID int64) ([]BalanceHistory, error) {
 	var balances []BalanceHistory
-	err := config.DB.Where("client_id = ?", clientID).Where("metal_id = ?", metalID).Find(&balances).Error
+	err := config.DB.Order("created_at desc").Where("client_id = ?", clientID).Where("metal_id = ?", metalID).Find(&balances).Error
 	return balances, err
 }
