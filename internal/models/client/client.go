@@ -50,6 +50,10 @@ func (c *Client) GetByPhone(phone string) error {
 	return config.DB.Where("phone = ?", phone).First(c).Error
 }
 
+func (c *Client) Save(pin string) error {
+	return config.DB.Save(c).Error
+}
+
 func (c *Client) GetByOTP(otp string) error {
 	return config.DB.Where("otp = ?", otp).First(c).Error
 }

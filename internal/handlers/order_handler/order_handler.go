@@ -124,12 +124,11 @@ func sendInvoice(orderp order.OrderPayment) error {
 	defer resp.Body.Close()
 
 	// Read the response body
-	body, err := ioutil.ReadAll(resp.Body)
+	_, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}
 
-	fmt.Println("body : ", string(body))
 	return nil
 
 }
