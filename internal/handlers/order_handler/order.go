@@ -3,6 +3,7 @@ package order_handler
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"kcloudb1/internal/config"
 	"kcloudb1/internal/models/metal"
@@ -15,6 +16,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"gorm.io/gorm/clause"
 )
 
 func CreateOrder(c *gin.Context) {
@@ -78,6 +80,36 @@ func CreateOrder(c *gin.Context) {
 	tx.Commit()
 
 	c.JSON(http.StatusOK, utils.Success([]string{"Success to create order", "Амжилттай"}, nil))
+}
+
+func GetOrderList(c *gin.Context) {
+	limit, _ := c.Get("limit")
+	sort, _ := c.Get("sort")
+	ordd, _ := c.Get("order")
+	offset, _ := c.Get("offset")
+
+	limitInt, _ := strconv.Atoi(limit.(string))
+
+	offsetInt, _ := strconv.Atoi(offset.(string))
+	clientIDStr := c.MustGet("clientID")
+
+	clientID, err := strconv.ParseInt(clientIDStr.(string), 10, 64)
+
+	if err != nil {
+		resp := utils.Error([]string{"Failed to get clientID parse int64", "Алдаа гарлаа"}, err)
+		c.JSON(http.StatusBadRequest, resp)
+		return
+	}
+
+	var ord []order.OrderExtend
+
+	if err := config.DB.Where("client_id = ?", clientID).Preload(clause.Associations).Limit(limitInt).Order(fmt.Sprintf("%s %s", sort.(string), ordd.(string))).Offset(offsetInt).Find(&ord).Error; err != nil {
+		resp := utils.Error([]string{"Failed to get orders", "Алдаа гарлаа"}, err)
+		c.JSON(http.StatusInternalServerError, resp)
+		return
+	}
+
+	c.JSON(http.StatusOK, utils.Success([]string{"Success to get orders", "Амжилттай"}, ord))
 
 }
 

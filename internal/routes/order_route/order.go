@@ -11,5 +11,6 @@ func OrderRoute(r *gin.RouterGroup) {
 	orderRoute := r.Group("/order")
 	{
 		orderRoute.POST("/", middleware.Auth(), order_handler.CreateOrder)
+		orderRoute.GET("/", middleware.Auth(), middleware.Paginate(), order_handler.GetOrderList)
 	}
 }

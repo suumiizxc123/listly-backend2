@@ -15,4 +15,4 @@ docker service scale kcloudstack_app=5
 docker build -t suumiizxc0519/onegram:v1.0.1 .
 docker push suumiizxc0519/onegram:v1.0.1
 
-ssh root@174.138.16.219
+ssh root@206.189.82.163
