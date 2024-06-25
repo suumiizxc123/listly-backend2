@@ -2,6 +2,7 @@ package main
 
 import (
 	"kcloudb1/internal/config"
+	"kcloudb1/internal/routes/admin_route"
 	"kcloudb1/internal/routes/client_route"
 	"kcloudb1/internal/routes/metal_route"
 	"kcloudb1/internal/routes/order_route"
@@ -45,6 +46,7 @@ func main() {
 	order_route.OrderRoute(v1)
 
 	order_route.BalanceRoute(v1)
+	admin_route.AdminRoute(v1)
 
 	r.Run(":8080")
 }

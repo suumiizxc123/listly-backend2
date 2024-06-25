@@ -3,7 +3,7 @@ package order
 import "kcloudb1/internal/config"
 
 type OrderPayment struct {
-	ID                  int64   `json:"ID"`
+	ID                  int64   `json:"id"`
 	OrderID             int64   `json:"order_id"`
 	InvoiceCode         string  `json:"invoice_code"`
 	SenderInvoiceNo     string  `json:"sender_invoice_no"`

@@ -10,7 +10,7 @@ import (
 )
 
 type MetalRate struct {
-	ID              int64     `json:"ID"`
+	ID              int64     `json:"id"`
 	MetalID         int64     `json:"metal_id"`
 	Rate            float32   `json:"rate"`
 	Date            time.Time `json:"date"`

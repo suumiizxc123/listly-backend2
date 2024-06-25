@@ -6,8 +6,8 @@ import (
 )
 
 type Balance struct {
-	ID        int64     `json:"ID"`
-	ClientID  int64     `json:"user_id"`
+	ID        int64     `json:"id"`
+	ClientID  int64     `json:"client_id"`
 	MetalID   int64     `json:"metal_id"`
 	Quantity  float32   `json:"quantity"`
 	CreatedAt time.Time `json:"created_at"`
@@ -45,7 +45,7 @@ func (b *Balance) GetByClientAndMetalID(clientID any, metalID int64) error {
 }
 
 type BalanceResponse struct {
-	ID        int64     `json:"ID"`
+	ID        int64     `json:"id"`
 	ClientID  int64     `json:"user_id"`
 	MetalID   int64     `json:"metal_id"`
 	Quantity  float32   `json:"quantity"`

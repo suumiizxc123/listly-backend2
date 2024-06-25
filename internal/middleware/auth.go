@@ -72,3 +72,31 @@ func Auth() gin.HandlerFunc {
 		c.Next()
 	}
 }
+
+func AuthAdmin() gin.HandlerFunc {
+	return func(c *gin.Context) {
+
+		authHeader := c.GetHeader("Authorization")
+		if authHeader == "" {
+			c.JSON(http.StatusUnauthorized, utils.Error(
+				[]string{"Forbidden", "Зөвшөөрөгдөөгүй нэвтрэлт"},
+				"Forbidden",
+			))
+			c.Abort()
+			return
+		}
+
+		adminIDStr, err := config.RS.Get(authHeader).Result()
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, utils.Error(
+				[]string{"Unauthorized", "Нэвтрээгүй байна"},
+				err.Error(),
+			))
+			c.Abort()
+			return
+		}
+		fmt.Println("Admin ID:", adminIDStr)
+		c.Set("adminID", adminIDStr)
+		c.Next()
+	}
+}
