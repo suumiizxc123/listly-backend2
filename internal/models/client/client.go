@@ -6,7 +6,7 @@ import (
 )
 
 type Client struct {
-	ID           int64     `json:"ID" gorm:"primary_key"`
+	ID           int64     `json:"id" gorm:"primary_key"`
 	Phone        string    `json:"phone"`
 	Password     string    `json:"password"`
 	Pin          string    `json:"pin"`
@@ -59,7 +59,7 @@ func (c *Client) GetByOTP(otp string) error {
 }
 
 type ClientOutput struct {
-	ID           int64     `json:"ID"`
+	ID           int64     `json:"id"`
 	Phone        string    `json:"phone"`
 	IsActive     int64     `json:"is_active"`
 	IsRegistered int64     `json:"is_registered"`
@@ -67,4 +67,8 @@ type ClientOutput struct {
 	LastName     string    `json:"last_name"`
 	CreatedAt    time.Time `json:"created_at"`
 	Token        string    `json:"token"`
+}
+
+func (c *ClientOutput) TableName() string {
+	return "one_client"
 }

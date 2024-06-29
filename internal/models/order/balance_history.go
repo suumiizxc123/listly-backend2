@@ -6,7 +6,7 @@ import (
 )
 
 type BalanceHistory struct {
-	ID        int64     `json:"ID"`
+	ID        int64     `json:"id"`
 	ClientID  int64     `json:"user_id"`
 	MetalID   int64     `json:"metal_id"`
 	Balance   float32   `json:"balance"`
