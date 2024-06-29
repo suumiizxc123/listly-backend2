@@ -58,7 +58,7 @@ func (o *Order) GetSenderInvoiceNo(senderInvoiceNo string) error {
 
 type CreateOrderInput struct {
 	ClientID int64   `json:"user_id"`
-	Amount   float32 `json:"amount"`
+	Quantity float32 `json:"quantity"`
 	MetalID  int64   `json:"metal_id"`
 }
 

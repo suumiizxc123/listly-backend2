@@ -40,7 +40,8 @@ func CreateOrder(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, resp)
 		return
 	}
-	ord.Amount = input.Amount
+	// ord.Amount = input.Amount
+	ord.Quantity = input.Quantity
 	ord.MetalID = input.MetalID
 	ord.ClientID = clientID
 
@@ -51,7 +52,7 @@ func CreateOrder(c *gin.Context) {
 	}
 
 	ord.Price = met.Rate
-	ord.Quantity = input.Amount / met.Rate
+	ord.Amount = ord.Price * ord.Quantity
 	ord.Status = "pending"
 	ord.CreatedAt = time.Now()
 
@@ -63,27 +64,24 @@ func CreateOrder(c *gin.Context) {
 	ordp.InvoiceCode = "LISTLY_AGENT_INVOICE"
 	newuid := uuid.NewString()
 	ordp.SenderInvoiceNo = newuid
-	ordp.InvoiceDescription = "test"
+	ordp.InvoiceDescription = "GOLD PURCHASE"
 	ordp.InvoiceReceiverCode = "terminal"
 	ordp.SenderBranchCode = "SALBAR1"
-	ordp.Amount = ord.Amount
+	ordp.Amount = ord.Amount * 1.01
 	ordp.CallbackURL = "http://oggbackend.999.mn:8080/api/v1/payment/" + newuid
 
 	if err := ordp.Create(); err != nil {
 		tx.Rollback()
 	}
 
-	if err := sendInvoice(ordp); err != nil {
+	res, err := sendInvoice(ordp)
+	if err != nil {
 		tx.Rollback()
 	}
 
 	tx.Commit()
 
-	if err := ordp.Get(); err != nil {
-		fmt.Println("Get error :", err)
-	}
-
-	c.JSON(http.StatusOK, utils.Success([]string{"Success to create order", "Амжилттай"}, ordp))
+	c.JSON(http.StatusOK, utils.Success([]string{"Success to create order", "Амжилттай"}, res))
 }
 
 func GetOrderList(c *gin.Context) {
@@ -117,7 +115,7 @@ func GetOrderList(c *gin.Context) {
 
 }
 
-func sendInvoice(orderp order.OrderPayment) error {
+func sendInvoice(orderp order.OrderPayment) (payment.QPayInvoiceResponse, error) {
 
 	var ttk payment.QPayToken
 	ttk.Last()
@@ -136,7 +134,7 @@ func sendInvoice(orderp order.OrderPayment) error {
 	// Convert the map to JSON
 	jsonData, err := json.Marshal(input)
 	if err != nil {
-		return err
+		return payment.QPayInvoiceResponse{}, err
 	}
 
 	fmt.Println("jsonData:", string(jsonData))
@@ -147,7 +145,7 @@ func sendInvoice(orderp order.OrderPayment) error {
 	// Create a new HTTP request with the POST method, URL, and request body
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
 	if err != nil {
-		return err
+		return payment.QPayInvoiceResponse{}, err
 	}
 
 	req.Header.Set("Content-Type", "application/json")
@@ -156,13 +154,13 @@ func sendInvoice(orderp order.OrderPayment) error {
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return err
+		return payment.QPayInvoiceResponse{}, err
 	}
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return err
+		return payment.QPayInvoiceResponse{}, err
 	}
 
 	fmt.Println("Response status:", resp.Status)
@@ -173,18 +171,12 @@ func sendInvoice(orderp order.OrderPayment) error {
 		fmt.Println("Error qpay:", err)
 	}
 
-	urlss, _ := json.Marshal(res.Urls)
-
 	if err := config.DB.Model(&order.OrderPayment{}).
 		Where("id = ?", orderp.ID).
-		Update("invoice_id", res.InvoiceID).
-		Update("qr_text", res.QRText).
-		Update("qr_image", res.QRImage).
-		Update("q_pay_short_url", res.QPayShortUrl).
-		Update("urls", urlss).Error; err != nil {
-		return err
+		Update("invoice_id", res.InvoiceID).Error; err != nil {
+		return payment.QPayInvoiceResponse{}, err
 	}
 
-	return nil
+	return res, nil
 
 }
