@@ -45,6 +45,7 @@ func main() {
 	order_route.OrderRoute(v1)
 
 	order_route.BalanceRoute(v1)
+	order_route.PaymentRoute(v1)
 
 	r.Run(":8080")
 }

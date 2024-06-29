@@ -61,14 +61,14 @@ func CreateOrder(c *gin.Context) {
 	}
 
 	ordp.OrderID = ord.ID
-	ordp.InvoiceCode = "TEST_INVOICE"
+	ordp.InvoiceCode = "LISTLY_AGENT_INVOICE"
 	newuid := uuid.NewString()
 	ordp.SenderInvoiceNo = newuid
 	ordp.InvoiceDescription = "test"
 	ordp.InvoiceReceiverCode = "terminal"
 	ordp.SenderBranchCode = "SALBAR1"
 	ordp.Amount = ord.Amount
-	ordp.CallbackURL = "https://3fc9-202-21-120-182.ngrok-free.app/payments/" + newuid
+	ordp.CallbackURL = "http://oggbackend.999.mn:8080/api/v1/payment/" + newuid
 
 	if err := ordp.Create(); err != nil {
 		tx.Rollback()
@@ -80,11 +80,19 @@ func CreateOrder(c *gin.Context) {
 
 	tx.Commit()
 
-	c.JSON(http.StatusOK, utils.Success([]string{"Success to create order", "Амжилттай"}, nil))
+	if err := ordp.Get(); err != nil {
+		fmt.Println("Get error :", err)
+	}
+
+	c.JSON(http.StatusOK, utils.Success([]string{"Success to create order", "Амжилттай"}, ordp))
 
 }
 
 func sendInvoice(orderp order.OrderPayment) error {
+
+	var ttk payment.QPayToken
+	ttk.Last()
+
 	var input payment.QPayInvoiceInput
 	input.InvoiceCode = orderp.InvoiceCode
 	input.SenderInvoiceNo = orderp.SenderInvoiceNo
@@ -102,8 +110,10 @@ func sendInvoice(orderp order.OrderPayment) error {
 		return err
 	}
 
+	fmt.Println("jsonData:", string(jsonData))
+
 	// Create the request URL
-	url := "https://merchant-sandbox.qpay.mn/v2/invoice"
+	url := "https://merchant.qpay.mn/v2/invoice"
 
 	// Create a new HTTP request with the POST method, URL, and request body
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
@@ -111,21 +121,38 @@ func sendInvoice(orderp order.OrderPayment) error {
 		return err
 	}
 
-	// Set the Content-Type header to application/json
 	req.Header.Set("Content-Type", "application/json")
-	// Set the x-api-key header
-	req.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRfaWQiOiI5OWNmYjFiMi0zMmNjLTRhNDMtOWNjZi02NWNhM2JjOTg0YWYiLCJzZXNzaW9uX2lkIjoiQVhXQnNtUXJmb2hObE0xMW9Vd1c5M3NYc2tleUNnbG8iLCJpYXQiOjE3MTgwMzIyNDMsImV4cCI6MzQzNjE1MDg4Nn0.F-bmsKGihb7RHcj9Pbf22LjeH86mYaYvNuIp3-KAr0A")
 
-	// Send the request using the default HTTP client
+	req.Header.Set("Authorization", "Bearer "+ttk.AccessToken)
+
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return err
 	}
 	defer resp.Body.Close()
 
-	// Read the response body
-	_, err = ioutil.ReadAll(resp.Body)
+	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
+		return err
+	}
+
+	fmt.Println("Response status:", resp.Status)
+	var res payment.QPayInvoiceResponse
+	err = json.Unmarshal(body, &res)
+
+	if err != nil {
+		fmt.Println("Error qpay:", err)
+	}
+
+	urlss, _ := json.Marshal(res.Urls)
+
+	if err := config.DB.Model(&order.OrderPayment{}).
+		Where("id = ?", orderp.ID).
+		Update("invoice_id", res.InvoiceID).
+		Update("qr_text", res.QRText).
+		Update("qr_image", res.QRImage).
+		Update("q_pay_short_url", res.QPayShortUrl).
+		Update("urls", urlss).Error; err != nil {
 		return err
 	}
 

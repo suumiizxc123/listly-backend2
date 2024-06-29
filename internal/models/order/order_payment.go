@@ -1,6 +1,15 @@
 package order
 
-import "kcloudb1/internal/config"
+import (
+	"kcloudb1/internal/config"
+)
+
+type BankUrl struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Logo        string `json:"logo"`
+	Link        string `json:"link"`
+}
 
 type OrderPayment struct {
 	ID                  int64   `json:"ID"`
@@ -16,6 +25,7 @@ type OrderPayment struct {
 	QRText              string  `json:"qr_text"`
 	QRImage             string  `json:"qr_image"`
 	QPayShortUrl        string  `json:"qPay_shortUrl"`
+	Urls                string  `json:"urls"`
 }
 
 func (q *OrderPayment) TableName() string {

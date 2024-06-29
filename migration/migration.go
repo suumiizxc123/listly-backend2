@@ -5,6 +5,7 @@ import (
 	"kcloudb1/internal/models/client"
 	"kcloudb1/internal/models/metal"
 	"kcloudb1/internal/models/order"
+	"kcloudb1/internal/models/payment"
 )
 
 func main() {
@@ -20,5 +21,6 @@ func main() {
 		order.OrderPayment{},
 		order.Balance{},
 		order.BalanceHistory{},
+		payment.QPayToken{},
 	)
 }
