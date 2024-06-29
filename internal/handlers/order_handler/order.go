@@ -84,7 +84,6 @@ func CreateOrder(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, utils.Success([]string{"Success to create order", "Амжилттай"}, ordp))
-	c.JSON(http.StatusOK, utils.Success([]string{"Success to create order", "Амжилттай"}, nil))
 }
 
 func GetOrderList(c *gin.Context) {
