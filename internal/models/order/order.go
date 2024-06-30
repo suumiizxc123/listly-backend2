@@ -8,14 +8,15 @@ import (
 )
 
 type Order struct {
-	ID        int64     `json:"id"`
-	ClientID  int64     `json:"client_id"`
-	Amount    float32   `json:"amount"`
-	Price     float32   `json:"price"`
-	MetalID   int64     `json:"metal_id"`
-	Quantity  float32   `json:"quantity"`
-	Status    string    `json:"status"`
-	CreatedAt time.Time `json:"created_at"`
+	ID          int64     `json:"id"`
+	ClientID    int64     `json:"client_id"`
+	Amount      float32   `json:"amount"`
+	Price       float32   `json:"price"`
+	MetalID     int64     `json:"metal_id"`
+	Quantity    float32   `json:"quantity"`
+	Status      string    `json:"status"`
+	AdminStatus string    `json:"admin_status"`
+	CreatedAt   time.Time `json:"created_at"`
 }
 
 func (o *Order) TableName() string {
@@ -63,16 +64,17 @@ type CreateOrderInput struct {
 }
 
 type OrderExtend struct {
-	ID        int64         `json:"id"`
-	ClientID  int64         `json:"user_id"`
-	Client    client.Client `json:"client" gorm:"foreignKey:ID; references:ClientID"`
-	Amount    float32       `json:"amount"`
-	Price     float32       `json:"price"`
-	MetalID   int64         `json:"metal_id"`
-	Metal     metal.Metal   `json:"metal" gorm:"foreignKey:ID; references:MetalID"`
-	Quantity  float32       `json:"quantity"`
-	Status    string        `json:"status"`
-	CreatedAt time.Time     `json:"created_at"`
+	ID          int64         `json:"id"`
+	ClientID    int64         `json:"user_id"`
+	Client      client.Client `json:"client" gorm:"foreignKey:ID; references:ClientID"`
+	Amount      float32       `json:"amount"`
+	Price       float32       `json:"price"`
+	MetalID     int64         `json:"metal_id"`
+	Metal       metal.Metal   `json:"metal" gorm:"foreignKey:ID; references:MetalID"`
+	Quantity    float32       `json:"quantity"`
+	Status      string        `json:"status"`
+	AdminStatus string        `json:"admin_status"`
+	CreatedAt   time.Time     `json:"created_at"`
 }
 
 func (o *OrderExtend) TableName() string {

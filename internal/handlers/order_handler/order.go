@@ -60,6 +60,7 @@ func CreateOrder(c *gin.Context) {
 	ord.Price = met.Rate
 	ord.Amount = ord.Price*ord.Quantity + 50000.0*ord.Quantity
 	ord.Status = "pending"
+	ord.AdminStatus = "pending"
 	ord.CreatedAt = time.Now()
 
 	fmt.Println("step 1 : ", time.Now().Sub(timeStart))
@@ -124,7 +125,7 @@ func GetOrderList(c *gin.Context) {
 
 	var ord []order.OrderExtend
 
-	if err := config.DB.Where("client_id = ?", clientID).Preload(clause.Associations).Limit(limitInt).Order(fmt.Sprintf("%s %s", sort.(string), ordd.(string))).Offset(offsetInt).Find(&ord).Error; err != nil {
+	if err := config.DB.Where("client_id = ?", clientID).Where("status = ?", "success").Preload(clause.Associations).Limit(limitInt).Order(fmt.Sprintf("%s %s", sort.(string), ordd.(string))).Offset(offsetInt).Find(&ord).Error; err != nil {
 		resp := utils.Error([]string{"Failed to get orders", "Алдаа гарлаа"}, err)
 		c.JSON(http.StatusInternalServerError, resp)
 		return
