@@ -58,7 +58,7 @@ func CreateOrder(c *gin.Context) {
 	}()
 
 	ord.Price = met.Rate
-	ord.Amount = ord.Price * ord.Quantity
+	ord.Amount = ord.Price*ord.Quantity + 50000.0
 	ord.Status = "pending"
 	ord.CreatedAt = time.Now()
 

@@ -104,7 +104,7 @@ func runJobHour() {
 					metalRate.Date = insertDate
 					metalRate.MetalID = 1
 					ratevalue, _ := strconv.ParseFloat(strings.ReplaceAll(value.(string), ",", ""), 32)
-					metalRate.Rate = float32(ratevalue) + 50000.0
+					metalRate.Rate = float32(ratevalue)
 
 					if err := utils.SendRequestMetal(metalRate); err != nil {
 						fmt.Println("Error sending request:", err)
