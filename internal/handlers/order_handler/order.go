@@ -74,7 +74,7 @@ func CreateOrder(c *gin.Context) {
 		InvoiceDescription:  "GOLD PURCHASE",
 		InvoiceReceiverCode: "terminal",
 		SenderBranchCode:    "SALBAR1",
-		Amount:              ord.Amount / 0.99,
+		Amount:              ord.Amount,
 		CallbackURL:         fmt.Sprintf("http://oggbackend.999.mn:8080/api/v1/payment/%s", newuid),
 	}
 
