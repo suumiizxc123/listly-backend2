@@ -67,7 +67,7 @@ func CreateOrder(c *gin.Context) {
 	ordp.InvoiceDescription = "GOLD PURCHASE"
 	ordp.InvoiceReceiverCode = "terminal"
 	ordp.SenderBranchCode = "SALBAR1"
-	ordp.Amount = ord.Amount * 1.01
+	ordp.Amount = ord.Amount / 0.99
 	ordp.CallbackURL = "http://oggbackend.999.mn:8080/api/v1/payment/" + newuid
 
 	if err := ordp.Create(); err != nil {

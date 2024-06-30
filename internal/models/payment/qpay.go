@@ -45,3 +45,9 @@ func (c *QPayToken) TableName() string {
 func (c *QPayToken) Last() error {
 	return config.DB.Last(c).Error
 }
+
+type QPayCheck struct {
+	Count      int64                    `json:"count"`
+	PaidAmount float32                  `json:"paid_amount"`
+	Rows       []map[string]interface{} `json:"rows"`
+}
