@@ -8,11 +8,11 @@ import (
 	"net/http"
 )
 
-func SendRequestMetal(mmm metal.MetalRate) error {
+func SendCurrencyUSD(mmm metal.MetalRate) error {
 	url := "http://oggbackend.999.mn:8080/api/v1/metal-rate"
 
 	// JSON payload to send in the request body
-	jsonData := fmt.Sprintf(`{"date": "%v", "metal_id": 1, "rate": %.2f}`, mmm.Date.Format("2006-01-02T15:04:05Z"), mmm.Rate)
+	jsonData := fmt.Sprintf(`{"date": "%v", "metal_id": 2, "rate": %.2f}`, mmm.Date.Format("2006-01-02T15:04:05Z"), mmm.Rate)
 
 	// Create a new request with the JSON payload
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer([]byte(jsonData)))
