@@ -17,6 +17,8 @@ type Client struct {
 	Token        string    `json:"token"`
 	FirstName    string    `json:"first_name"`
 	LastName     string    `json:"last_name"`
+	BankName     string    `json:"bank_name"`
+	BankAccount  string    `json:"bank_account"`
 	CreatedAt    time.Time `json:"created_at"`
 }
 
@@ -65,6 +67,8 @@ type ClientOutput struct {
 	IsRegistered int64     `json:"is_registered"`
 	FirstName    string    `json:"first_name"`
 	LastName     string    `json:"last_name"`
+	BankName     string    `json:"bank_name"`
+	BankAccount  string    `json:"bank_account"`
 	CreatedAt    time.Time `json:"created_at"`
 	Token        string    `json:"token"`
 }

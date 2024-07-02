@@ -140,11 +140,13 @@ func VerifyOTP(c *gin.Context) {
 
 func Register(c *gin.Context) {
 	var data struct {
-		Phone     string `json:"phone"`
-		Password  string `json:"password"`
-		Pin       string `json:"pin"`
-		Firstname string `json:"first_name"`
-		Lastname  string `json:"last_name"`
+		Phone       string `json:"phone"`
+		Password    string `json:"password"`
+		Pin         string `json:"pin"`
+		Firstname   string `json:"first_name"`
+		Lastname    string `json:"last_name"`
+		BankName    string `json:"bank_name"`
+		BankAccount string `json:"bank_account"`
 	}
 
 	var client client.Client
@@ -172,6 +174,8 @@ func Register(c *gin.Context) {
 	client.FirstName = data.Firstname
 	client.LastName = data.Lastname
 	client.IsRegistered = 1
+	client.BankAccount = data.BankAccount
+	client.BankName = data.BankName
 
 	if err := client.Update(); err != nil {
 		resp = utils.Error([]string{"Failed to update client", "Алдаа гарлаа"}, err)
