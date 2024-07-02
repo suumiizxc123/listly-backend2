@@ -19,6 +19,7 @@ func AdminRoute(r *gin.RouterGroup) {
 
 		adminRoute.POST("/order/verify", middleware.AuthAdmin(), admin_handler.VerifyOrder)
 		adminRoute.POST("/order/cancel", middleware.AuthAdmin(), admin_handler.CancelOrder)
+		adminRoute.POST("/order/create", middleware.AuthAdmin(), admin_handler.CreateOrder)
 
 		adminRoute.POST("/withdraw/verify", middleware.AuthAdmin(), admin_handler.VerifyWithDraw)
 		adminRoute.POST("/withdraw", middleware.AuthAdmin(), admin_handler.CancelOrder)

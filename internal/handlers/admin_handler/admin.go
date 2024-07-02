@@ -6,6 +6,7 @@ import (
 	"kcloudb1/internal/utils"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -270,6 +271,52 @@ func CancelOrder(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, utils.Success([]string{"Success to update order", "Амжилттай"}, nil))
+}
+
+func CreateOrder(c *gin.Context) {
+	var input struct {
+		ClientID int64   `json:"client_id"`
+		MetalID  int64   `json:"metal_id"`
+		Quantity float32 `json:"quantity"`
+		Amount   float32 `json:"amount"`
+	}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, utils.Error([]string{"Failed to bind json", "Алдаа гарлаа"}, err))
+		return
+	}
+
+	Price := input.Amount/input.Quantity - 50000.0
+
+	ord := order.Order{
+		ClientID:    input.ClientID,
+		MetalID:     input.MetalID,
+		Quantity:    input.Quantity,
+		Amount:      input.Amount,
+		Price:       Price,
+		Type:        "deposit",
+		CreatedAt:   time.Now(),
+		Status:      "success",
+		AdminStatus: "success",
+	}
+
+	if err := ord.Create(); err != nil {
+		c.JSON(http.StatusInternalServerError, utils.Error([]string{"Failed to create order", "Алдаа гарлаа"}, err))
+		return
+	}
+
+	var bal order.Balance
+	if err := bal.GetByClientAndMetalID(ord.ClientID, 1); err != nil {
+		c.JSON(http.StatusInternalServerError, utils.Error([]string{"Failed to get balance", "Алдаа гарлаа"}, err))
+		return
+	}
+
+	if err := config.DB.Model(&order.Balance{}).Where("id = ?", bal.ID).Update("quantity", bal.Quantity+ord.Quantity).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, utils.Error([]string{"Failed to update balance", "Алдаа гарлаа"}, err))
+		return
+	}
+
+	c.JSON(http.StatusOK, utils.Success([]string{"Success to create order", "Амжилттай"}, nil))
 }
 
 func VerifyWithDraw(c *gin.Context) {

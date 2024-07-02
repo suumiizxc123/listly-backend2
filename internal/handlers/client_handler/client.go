@@ -66,7 +66,7 @@ func GenerateOTP(c *gin.Context) {
 	} else {
 
 		if clientprev.IsRegistered == 1 {
-			resp = utils.Error([]string{"Phone already registered", "Бүртгэлтэй хэрэглэгч байна"}, fmt.Errorf("Phone already registered"))
+			resp = utils.Error([]string{"Phone already registered", "Бүртгэлтэй хэрэглэгч байна"}, fmt.Errorf("phone already registered"))
 			c.JSON(http.StatusBadRequest, resp)
 			return
 		}
@@ -114,7 +114,7 @@ func VerifyOTP(c *gin.Context) {
 	}
 
 	if client.OTP != data.Otp {
-		resp = utils.Error([]string{"Invalid OTP", "Алдаа гарлаа"}, fmt.Errorf("Invalid OTP"))
+		resp = utils.Error([]string{"Invalid OTP", "Алдаа гарлаа"}, fmt.Errorf("invalid otp"))
 		c.JSON(http.StatusBadRequest, resp)
 		return
 	}
@@ -129,7 +129,7 @@ func VerifyOTP(c *gin.Context) {
 	client.IsActive = 1
 
 	if err := client.Update(); err != nil {
-		resp = utils.Error([]string{"Failed to update client active status", "Алдаа гарлаа"}, err)
+		resp = utils.Error([]string{"Failed to update client active status", "Алдаа гарлаа"}, err.Error())
 		c.JSON(http.StatusInternalServerError, resp)
 		return
 	}
@@ -261,13 +261,13 @@ func LoginByPassword(c *gin.Context) {
 	}
 
 	if clientd.IsRegistered == 0 {
-		resp = utils.Error([]string{"Phone not registered", "Алдаа гарлаа"}, fmt.Errorf("Phone not registered"))
+		resp = utils.Error([]string{"Phone not registered", "Алдаа гарлаа"}, fmt.Errorf("phone not registered"))
 		c.JSON(http.StatusBadRequest, resp)
 		return
 	}
 
 	if clientd.Password != data.Password {
-		resp = utils.Error([]string{"Invalid password", "Алдаа гарлаа"}, fmt.Errorf("Invalid password"))
+		resp = utils.Error([]string{"Invalid password", "Алдаа гарлаа"}, fmt.Errorf("invalid password"))
 		c.JSON(http.StatusBadRequest, resp)
 		return
 	}
@@ -324,7 +324,7 @@ func ForgotPassword(c *gin.Context) {
 	}
 
 	if client.IsRegistered == 0 {
-		c.JSON(http.StatusBadRequest, utils.Error([]string{"Phone not registered", "Алдаа гарлаа"}, fmt.Errorf("Phone not registered")))
+		c.JSON(http.StatusBadRequest, utils.Error([]string{"Phone not registered", "Алдаа гарлаа"}, fmt.Errorf("phone not registered")))
 		return
 	}
 
@@ -368,12 +368,12 @@ func VerifyOTPChangePassword(c *gin.Context) {
 	}
 
 	if client.OTP != input.Otp {
-		c.JSON(http.StatusBadRequest, utils.Error([]string{"Invalid OTP", "Алдаа гарлаа"}, fmt.Errorf("Invalid OTP")))
+		c.JSON(http.StatusBadRequest, utils.Error([]string{"Invalid OTP", "Алдаа гарлаа"}, fmt.Errorf("invalid otp")))
 		return
 	}
 
 	if client.OTPExpire.Before(time.Now()) {
-		c.JSON(http.StatusBadRequest, utils.Error([]string{"OTP expired", "Алдаа гарлаа"}, fmt.Errorf("OTP expired")))
+		c.JSON(http.StatusBadRequest, utils.Error([]string{"OTP expired", "Алдаа гарлаа"}, fmt.Errorf("otp expired")))
 		return
 	}
 
@@ -407,7 +407,7 @@ func ChangePassword(c *gin.Context) {
 	}
 
 	if input.Password != client.Password {
-		c.JSON(http.StatusBadRequest, utils.Error([]string{"Invalid password", "Алдаа гарлаа"}, fmt.Errorf("Invalid password")))
+		c.JSON(http.StatusBadRequest, utils.Error([]string{"Invalid password", "Алдаа гарлаа"}, fmt.Errorf("invalid password")))
 		return
 	}
 
