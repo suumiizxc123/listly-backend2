@@ -187,3 +187,136 @@ func GetOrderList(c *gin.Context) {
 	resp = utils.Success([]string{"Success to get orders", "Амжилттай"}, ords)
 	c.JSON(http.StatusOK, resp)
 }
+
+func VerifyOrder(c *gin.Context) {
+	orderID := c.Query("order_id")
+
+	if orderID == "" {
+		c.JSON(http.StatusBadRequest, utils.Error([]string{"Failed to get order id", "Алдаа гарлаа"}, nil))
+		return
+	}
+
+	orderIDint, err := strconv.ParseInt(orderID, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, utils.Error([]string{"Failed to convert order id", "Алдаа гарлаа"}, err))
+		return
+	}
+
+	ord := order.Order{ID: orderIDint, AdminStatus: "success"}
+
+	if err := ord.Update(); err != nil {
+		c.JSON(http.StatusInternalServerError, utils.Error([]string{"Failed to update order", "Алдаа гарлаа"}, err))
+		return
+	}
+
+	if err := ord.Get(); err != nil {
+		c.JSON(http.StatusInternalServerError, utils.Error([]string{"Failed to get order", "Алдаа гарлаа"}, err))
+		return
+	}
+
+	var bal order.Balance
+	if ord.Type == "deposit" {
+		// add balance
+
+		if err := bal.GetByClientAndMetalID(ord.ClientID, 1); err != nil {
+			c.JSON(http.StatusInternalServerError, utils.Error([]string{"Failed to get balance", "Алдаа гарлаа"}, err.Error()))
+			return
+		}
+
+		if err := config.DB.Model(&order.Balance{}).Where("id = ?", bal.ID).Update("quantity", bal.Quantity+ord.Quantity).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, utils.Error([]string{"Failed to update balance", "Алдаа гарлаа"}, err.Error()))
+			return
+		}
+	} else {
+		// sub balance
+
+		if err := bal.GetByClientAndMetalID(ord.ClientID, 1); err != nil {
+			c.JSON(http.StatusInternalServerError, utils.Error([]string{"Failed to get balance", "Алдаа гарлаа"}, err.Error()))
+		}
+
+		if bal.Quantity < ord.Quantity {
+			c.JSON(http.StatusConflict, utils.Error([]string{"Out of balance", "Хүсэлтийн дүн хэтэрхий өндөр байна"}, "out of balance"))
+			return
+		}
+
+		if err := config.DB.Model(&order.Balance{}).Where("id = ?", bal.ID).Update("quantity", bal.Quantity-ord.Quantity).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, utils.Error([]string{"Failed to update balance", "Алдаа гарлаа"}, err.Error()))
+			return
+		}
+	}
+
+	c.JSON(http.StatusOK, utils.Success([]string{"Success to update order", "Амжилттай"}, nil))
+}
+
+func CancelOrder(c *gin.Context) {
+	orderID := c.Query("order_id")
+
+	if orderID == "" {
+		c.JSON(http.StatusBadRequest, utils.Error([]string{"Failed to get order id", "Алдаа гарлаа"}, nil))
+		return
+	}
+
+	orderIDint, err := strconv.ParseInt(orderID, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, utils.Error([]string{"Failed to convert order id", "Алдаа гарлаа"}, err))
+		return
+	}
+
+	ord := order.Order{ID: orderIDint, AdminStatus: "cancel"}
+
+	if err := ord.Update(); err != nil {
+		c.JSON(http.StatusInternalServerError, utils.Error([]string{"Failed to update order", "Алдаа гарлаа"}, err))
+		return
+	}
+
+	c.JSON(http.StatusOK, utils.Success([]string{"Success to update order", "Амжилттай"}, nil))
+}
+
+func VerifyWithDraw(c *gin.Context) {
+	withdrawID := c.Query("withdraw_id")
+
+	if withdrawID == "" {
+		c.JSON(http.StatusBadRequest, utils.Error([]string{"Failed to get withdraw id", "Алдаа гарлаа"}, nil))
+		return
+	}
+
+	withdrawIDint, err := strconv.ParseInt(withdrawID, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, utils.Error([]string{"Failed to convert withdraw id", "Алдаа гарлаа"}, err))
+		return
+	}
+
+	/// check balance and retrieve
+
+	withdraw := order.WithDraw{ID: withdrawIDint, AdminStatus: "success"}
+
+	if err := withdraw.Update(); err != nil {
+		c.JSON(http.StatusInternalServerError, utils.Error([]string{"Failed to update withdraw", "Алдаа гарлаа"}, err))
+		return
+	}
+
+	c.JSON(http.StatusOK, utils.Success([]string{"Success to update withdraw", "Амжилттай"}, nil))
+}
+
+func GetWithDrawList(c *gin.Context) {
+	limit, _ := c.Get("limit")
+	sort, _ := c.Get("sort")
+	ord, _ := c.Get("order")
+	offset, _ := c.Get("offset")
+
+	limitInt, _ := strconv.Atoi(limit.(string))
+
+	offsetInt, _ := strconv.Atoi(offset.(string))
+
+	var resp utils.Response
+	var wdr []order.WithDrawExtend
+
+	if err := config.DB.Limit(limitInt).Order(fmt.Sprintf("%s %s", sort.(string), ord.(string))).Offset(offsetInt).Preload(clause.Associations).Find(&wdr).Error; err != nil {
+		resp = utils.Error([]string{"Failed to get withdraws", "Алдаа гарлаа"}, err)
+		c.JSON(http.StatusInternalServerError, resp)
+		return
+	}
+
+	resp = utils.Success([]string{"Success to get withdraws", "Амжилттай"}, wdr)
+	c.JSON(http.StatusOK, resp)
+}

@@ -62,6 +62,7 @@ func CreateOrder(c *gin.Context) {
 	ord.Status = "pending"
 	ord.AdminStatus = "pending"
 	ord.CreatedAt = time.Now()
+	ord.Type = "deposit"
 
 	fmt.Println("step 1 : ", time.Now().Sub(timeStart))
 	if err := ord.Create(); err != nil {
@@ -90,6 +91,7 @@ func CreateOrder(c *gin.Context) {
 
 	// Prepare response
 	resm := map[string]interface{}{
+		"order_id":      ord.ID,
 		"invoice_id":    res.InvoiceID,
 		"qr_text":       res.QRText,
 		"qr_image":      res.QRImage,
@@ -134,6 +136,37 @@ func GetOrderList(c *gin.Context) {
 	c.JSON(http.StatusOK, utils.Success([]string{"Success to get orders", "Амжилттай"}, ord))
 
 }
+
+func GetOrder(c *gin.Context) {
+	idStr := c.Query("id")
+
+	if idStr == "" {
+		c.JSON(http.StatusBadRequest, utils.Error([]string{"Failed to get id", "id дутуу байна"}, nil))
+		return
+	}
+
+	id, err := strconv.ParseInt(idStr, 10, 64)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, utils.Error([]string{"Failed to convert id", "id хөрвүүлэлтэнд алдаа гарлаа"}, err))
+		return
+	}
+
+	ord := order.OrderExtend{}
+
+	if err := config.DB.Preload(clause.Associations).First(&ord, id).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, utils.Error([]string{"Failed to get order", "Алдаа гарлаа"}, err))
+		return
+	}
+
+	ord.Client.Password = ""
+	ord.Client.Pin = ""
+	ord.Client.OTP = ""
+	ord.Client.OTPExpire = time.Now()
+	c.JSON(http.StatusOK, utils.Success([]string{"Success to get order", "Амжилттай"}, ord))
+
+}
+
 func sendInvoice(ordp order.OrderPayment) (payment.QPayInvoiceResponse, error) {
 	var ttk payment.QPayToken
 	ttk.Last()

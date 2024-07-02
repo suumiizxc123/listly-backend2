@@ -16,5 +16,13 @@ func AdminRoute(r *gin.RouterGroup) {
 		adminRoute.DELETE("/client", middleware.AuthAdmin(), admin_handler.DeleteClient)
 		adminRoute.GET("/balance", middleware.AuthAdmin(), admin_handler.GetBalanceByClientID)
 		adminRoute.GET("/order", middleware.AuthAdmin(), middleware.Paginate(), admin_handler.GetOrderList)
+
+		adminRoute.POST("/order/verify", middleware.AuthAdmin(), admin_handler.VerifyOrder)
+		adminRoute.POST("/order/cancel", middleware.AuthAdmin(), admin_handler.CancelOrder)
+
+		adminRoute.POST("/withdraw/verify", middleware.AuthAdmin(), admin_handler.VerifyWithDraw)
+		adminRoute.POST("/withdraw", middleware.AuthAdmin(), admin_handler.CancelOrder)
+
+		adminRoute.GET("/withdraw", middleware.AuthAdmin(), middleware.Paginate(), admin_handler.GetWithDrawList)
 	}
 }

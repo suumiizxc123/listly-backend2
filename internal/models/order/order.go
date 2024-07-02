@@ -16,6 +16,7 @@ type Order struct {
 	Quantity    float32   `json:"quantity"`
 	Status      string    `json:"status"`
 	AdminStatus string    `json:"admin_status"`
+	Type        string    `json:"type"`
 	CreatedAt   time.Time `json:"created_at"`
 }
 
@@ -74,6 +75,7 @@ type OrderExtend struct {
 	Quantity    float32       `json:"quantity"`
 	Status      string        `json:"status"`
 	AdminStatus string        `json:"admin_status"`
+	Type        string        `json:"type"`
 	CreatedAt   time.Time     `json:"created_at"`
 }
 

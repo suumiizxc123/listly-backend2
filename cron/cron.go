@@ -31,6 +31,7 @@ func main() {
 
 	/////////////////////////////////////////////////////////////////
 	runJobHour()
+	runJobHour2()
 
 	// Run runJobHour2() concurrently
 	// go runJobHour2()
@@ -42,7 +43,7 @@ func main() {
 func runJobHour() {
 	fmt.Println("Executing cron job at", time.Now().Format(time.RFC3339))
 	today := time.Now().Format("2006-01-02")
-	prev := time.Now().AddDate(0, -6, 0).Format("2006-01-02")
+	prev := time.Now().AddDate(0, -1, 0).Format("2006-01-02")
 	url := "https://www.mongolbank.mn/mn/gold-and-silver-price/data?startDate=" + prev + "&endDate=" + today
 
 	// Create POST request
@@ -126,7 +127,10 @@ func runJobHour() {
 
 func runJobHour2() {
 	fmt.Println("Executing cron job at", time.Now().Format(time.RFC3339))
-	url := "https://www.mongolbank.mn/mn/currency-rate/data?startDate=2024-01-01&endDate=2024-07-01"
+
+	today := time.Now().Format("2006-01-02")
+	prev := time.Now().AddDate(0, -1, 0).Format("2006-01-02")
+	url := "https://www.mongolbank.mn/mn/currency-rate/data?startDate=" + prev + "&endDate=" + today
 
 	// Create POST request
 	req, err := http.NewRequest("POST", url, nil)

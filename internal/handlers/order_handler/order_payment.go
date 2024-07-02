@@ -53,17 +53,17 @@ func CheckPaymentCallBack(c *gin.Context) {
 		return
 	}
 
-	var bal order.Balance
+	// var bal order.Balance
 
-	if err := bal.GetByClientAndMetalID(ord.ClientID, 1); err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
-		return
-	}
+	// if err := bal.GetByClientAndMetalID(ord.ClientID, 1); err != nil {
+	// 	c.String(http.StatusInternalServerError, err.Error())
+	// 	return
+	// }
 
-	if err := config.DB.Model(&order.Balance{}).Where("id = ?", bal.ID).Update("quantity", bal.Quantity+ord.Quantity).Error; err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
-		return
-	}
+	// if err := config.DB.Model(&order.Balance{}).Where("id = ?", bal.ID).Update("quantity", bal.Quantity+ord.Quantity).Error; err != nil {
+	// 	c.String(http.StatusInternalServerError, err.Error())
+	// 	return
+	// }
 
 	c.String(http.StatusOK, newUID)
 
