@@ -21,19 +21,19 @@ func CronJob() {
 
 	scheduler := gocron.NewScheduler(time.UTC)
 
-	// _, err := scheduler.Every(1).Hour().Do(runJobHour)
-	// if err != nil {
-	// 	fmt.Println("Error scheduling job:", err)
-	// 	return
-	// }
+	_, err := scheduler.Every(1).Hour().Do(runJobHour)
+	if err != nil {
+		fmt.Println("Error scheduling job:", err)
+		return
+	}
 
-	// _, err = scheduler.Every(2).Hours().Do(runJobHour2)
-	// if err != nil {
-	// 	fmt.Println("Error scheduling job:", err)
-	// 	return
-	// }
+	_, err = scheduler.Every(2).Hours().Do(runJobHour2)
+	if err != nil {
+		fmt.Println("Error scheduling job:", err)
+		return
+	}
 
-	_, err := scheduler.Every(3).Day().Do(qpayTokenReset)
+	_, err = scheduler.Every(3).Day().Do(qpayTokenReset)
 	if err != nil {
 		fmt.Println("Error scheduling job:", err)
 		return
