@@ -1,43 +1,106 @@
-package main
+package cron
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io"
 	"kcloudb1/internal/config"
 	"kcloudb1/internal/models/metal"
+	"kcloudb1/internal/models/payment"
 	"kcloudb1/internal/utils"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/go-co-op/gocron"
 )
 
-func main() {
+func CronJob() {
 
-	config.ConnectDatabase()
-	// Create a new scheduler
-	// scheduler := gocron.NewScheduler(time.UTC)
+	scheduler := gocron.NewScheduler(time.UTC)
 
-	// // Schedule a job to run every minute
-	// _, err := scheduler.Every(1).Minute().Do(runJobHour)
+	// _, err := scheduler.Every(1).Hour().Do(runJobHour)
 	// if err != nil {
 	// 	fmt.Println("Error scheduling job:", err)
 	// 	return
 	// }
 
-	// scheduler.StartAsync()
+	// _, err = scheduler.Every(2).Hours().Do(runJobHour2)
+	// if err != nil {
+	// 	fmt.Println("Error scheduling job:", err)
+	// 	return
+	// }
 
-	// select {}
+	_, err := scheduler.Every(3).Day().Do(qpayTokenReset)
+	if err != nil {
+		fmt.Println("Error scheduling job:", err)
+		return
+	}
 
-	/////////////////////////////////////////////////////////////////
-	runJobHour()
-	runJobHour2()
+	// Start the scheduler in the background
+	scheduler.StartAsync()
 
-	// Run runJobHour2() concurrently
-	// go runJobHour2()
+	// Block the main goroutine to keep the program running
+	select {}
+}
 
-	// Keep the main goroutine running indefinitely
-	// select {}
+func basicAuth(username, password string) string {
+	auth := username + ":" + password
+	return base64.StdEncoding.EncodeToString([]byte(auth))
+}
+
+func qpayTokenReset() {
+	config.ConnectDatabase()
+
+	var token payment.QPayToken
+
+	url := "https://merchant.qpay.mn/v2/auth/token"
+
+	// Define your username and password
+	username := "LISTLY_AGENT"
+	password := "nbIqiJvG"
+
+	// Encode the credentials in Base64
+	auth := basicAuth(username, password)
+
+	// Create a new HTTP request
+	req, err := http.NewRequest("POST", url, nil)
+	if err != nil {
+		fmt.Println("Error creating request:", err)
+		return
+	}
+
+	// Set the Authorization header with the encoded credentials
+	req.Header.Set("Authorization", "Basic "+auth)
+
+	// Send the request using the default HTTP client
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Println("Error sending request:", err)
+		return
+	}
+	defer resp.Body.Close()
+
+	// Print the response status and body
+	fmt.Println("QPAY token response Status:", resp.Status)
+	if resp.Body != nil {
+		// Read response body
+		body, _ := io.ReadAll(resp.Body)
+
+		err = json.Unmarshal(body, &token)
+		if err != nil {
+			fmt.Println("Error decoding JSON:", err)
+			return
+		}
+
+		config.DB.Create(&token)
+
+		fmt.Println("QPAY token completed")
+	}
+
 }
 
 func runJobHour() {
@@ -104,7 +167,7 @@ func runJobHour() {
 					insertDate, _ = time.Parse("2006-01-02", value.(string))
 				}
 
-				fmt.Println("Is insert: ", isInsert)
+				fmt.Print(" Is insert: ", isInsert)
 			}
 
 			if key == "GOLD_BUY" {
@@ -178,7 +241,7 @@ func runJobHour2() {
 		var metalRate metal.MetalRate
 		for key, value := range itemType {
 			if key == "RATE_DATE" {
-				fmt.Println("Date: ", value)
+				fmt.Print("Date: ", value)
 				ok, err := metalRate.ExistDate(value.(string))
 				if err != nil {
 					fmt.Println("Error checking if exists:", err)
@@ -190,7 +253,7 @@ func runJobHour2() {
 					insertDate, _ = time.Parse("2006-01-02", value.(string))
 				}
 
-				fmt.Println("Is insert: ", isInsert)
+				fmt.Print(" Is insert: ", isInsert)
 			}
 
 			if key == "USD" {

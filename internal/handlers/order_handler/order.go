@@ -20,7 +20,7 @@ import (
 )
 
 func CreateOrder(c *gin.Context) {
-	timeStart := time.Now()
+	// timeStart := time.Now()
 	var input order.CreateOrderInput
 	var ord order.Order
 	// var ordp order.OrderPayment
@@ -64,7 +64,7 @@ func CreateOrder(c *gin.Context) {
 	ord.CreatedAt = time.Now()
 	ord.Type = "deposit"
 
-	fmt.Println("step 1 : ", time.Now().Sub(timeStart))
+	// fmt.Println("step 1 : ", time.Now().Sub(timeStart))
 	if err := ord.Create(); err != nil {
 		tx.Rollback()
 	}
@@ -83,7 +83,7 @@ func CreateOrder(c *gin.Context) {
 	if err := ordp.Create(); err != nil {
 		tx.Rollback()
 	}
-	fmt.Println("step 2 : ", time.Now().Sub(timeStart))
+	// fmt.Println("step 2 : ", time.Now().Sub(timeStart))
 	res, err := sendInvoice(ordp)
 	if err != nil {
 		tx.Rollback()
@@ -100,7 +100,7 @@ func CreateOrder(c *gin.Context) {
 		"amount":        ord.Amount,
 		"quantity":      ord.Quantity,
 	}
-	fmt.Println("step 3 : ", time.Now().Sub(timeStart))
+	// fmt.Println("step 3 : ", time.Now().Sub(timeStart))
 	tx.Commit()
 
 	c.JSON(http.StatusOK, utils.Success([]string{"Success to create order", "Амжилттай"}, resm))
