@@ -17,4 +17,4 @@ docker push suumiizxc0519/onegram:v1.0.1
 
 ssh root@206.189.82.163
 
-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
+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
