@@ -18,5 +18,6 @@ func ClientRoute(r *gin.RouterGroup) {
 		clientRoute.POST("/forgot-password", client_handler.ForgotPassword)
 		clientRoute.POST("/verify-otp-change-password", client_handler.VerifyOTPChangePassword)
 		clientRoute.POST("/change-password", client_handler.ChangePassword)
+
 	}
 }

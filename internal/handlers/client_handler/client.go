@@ -231,6 +231,19 @@ func CheckToken(c *gin.Context) {
 		return
 	}
 
+	clientIDStr, err := config.RS.Get(token).Result()
+
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, utils.Error(
+			[]string{"Unauthorized", "Нэвтрээгүй байна"},
+			err.Error(),
+		))
+		c.Abort()
+		return
+	}
+
+	fmt.Println("Client ID:", clientIDStr)
+
 	c.JSON(http.StatusOK, utils.Success([]string{"Success to check token", "Амжилттай"}, nil))
 
 }
