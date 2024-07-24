@@ -20,6 +20,7 @@ type Client struct {
 	BankName     string    `json:"bank_name"`
 	BankAccount  string    `json:"bank_account"`
 	CreatedAt    time.Time `json:"created_at"`
+	IsVIP        int64     `json:"is_vip"`
 }
 
 func (c *Client) TableName() string {

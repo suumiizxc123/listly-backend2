@@ -9,7 +9,9 @@ import (
 func PaymentRoute(r *gin.RouterGroup) {
 	paymentRoute := r.Group("/payment")
 	{
+		paymentRoute.GET("/vip-member/:newuid", order_handler.CheckPaymentVIPMemberCallBack)
 		paymentRoute.GET("/:newuid", order_handler.CheckPaymentCallBack)
 		paymentRoute.POST("/check-payment/:newuid", order_handler.CheckPayment)
 	}
+
 }

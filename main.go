@@ -49,6 +49,7 @@ func main() {
 	order_route.BalanceRoute(v1)
 	order_route.PaymentRoute(v1)
 	admin_route.AdminRoute(v1)
+	admin_route.FAQRoute(v1)
 	order_route.WithDrawRoute(v1)
 
 	go cron.CronJob()

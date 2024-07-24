@@ -2,6 +2,7 @@ package client_route
 
 import (
 	"kcloudb1/internal/handlers/client_handler"
+	"kcloudb1/internal/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,6 +19,8 @@ func ClientRoute(r *gin.RouterGroup) {
 		clientRoute.POST("/forgot-password", client_handler.ForgotPassword)
 		clientRoute.POST("/verify-otp-change-password", client_handler.VerifyOTPChangePassword)
 		clientRoute.POST("/change-password", client_handler.ChangePassword)
+
+		clientRoute.GET("/profile", middleware.Auth(), client_handler.GetProfile)
 
 	}
 }

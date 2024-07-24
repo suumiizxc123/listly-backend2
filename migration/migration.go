@@ -24,6 +24,8 @@ func main() {
 		order.BalanceHistory{},
 		payment.QPayToken{},
 		admin.Admin{},
+		admin.FAQ{},
 		order.WithDraw{},
+		order.VipMember{},
 	)
 }

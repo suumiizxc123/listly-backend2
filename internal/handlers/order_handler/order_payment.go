@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"kcloudb1/internal/config"
+	"kcloudb1/internal/models/client"
 	"kcloudb1/internal/models/order"
 	"kcloudb1/internal/models/payment"
 	"kcloudb1/internal/utils"
@@ -53,20 +54,71 @@ func CheckPaymentCallBack(c *gin.Context) {
 		return
 	}
 
-	// var bal order.Balance
+	var bal order.Balance
 
-	// if err := bal.GetByClientAndMetalID(ord.ClientID, 1); err != nil {
-	// 	c.String(http.StatusInternalServerError, err.Error())
-	// 	return
-	// }
+	if err := bal.GetByClientAndMetalID(ord.ClientID, 1); err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
 
-	// if err := config.DB.Model(&order.Balance{}).Where("id = ?", bal.ID).Update("quantity", bal.Quantity+ord.Quantity).Error; err != nil {
-	// 	c.String(http.StatusInternalServerError, err.Error())
-	// 	return
-	// }
+	if err := config.DB.Model(&order.Balance{}).Where("id = ?", bal.ID).Update("quantity", bal.Quantity+ord.Quantity).Error; err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
 
 	c.String(http.StatusOK, newUID)
 
+}
+
+func CheckPaymentVIPMemberCallBack(c *gin.Context) {
+
+	newUID := c.Param("newuid")
+
+	if newUID == "" {
+		c.String(http.StatusBadRequest, "New UID is empty")
+		return
+	}
+
+	var ordp order.OrderPayment
+
+	if err := config.DB.Where("sender_invoice_no = ?", newUID).First(&ordp).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.String(http.StatusNotFound, "Order payment not found")
+			return
+		}
+
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if err := config.DB.Model(&order.Order{}).Where("id = ?", ordp.OrderID).Update("status", "success").Error; err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	var vp order.VipMember
+
+	if err := config.DB.Where("id = ?", ordp.OrderID).First(&vp).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.String(http.StatusNotFound, "Order not found")
+			return
+		}
+
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	var clt client.Client
+
+	clt.ID = vp.ClientID
+	clt.IsVIP = 1
+
+	if err := clt.Update(); err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.String(http.StatusOK, newUID)
 }
 
 func CheckPayment(c *gin.Context) {

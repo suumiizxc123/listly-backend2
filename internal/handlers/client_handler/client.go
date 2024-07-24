@@ -9,6 +9,7 @@ import (
 	"kcloudb1/internal/utils"
 	"math/rand"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -430,4 +431,25 @@ func ChangePassword(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, utils.Success([]string{"Success to change password", "Амжилттай"}, nil))
+}
+
+func GetProfile(c *gin.Context) {
+	clientIDStr := c.MustGet("clientID")
+
+	clientID, err := strconv.Atoi(clientIDStr.(string))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, utils.Error([]string{"Failed to get clientID parse int64", "Алдаа гарлаа"}, err))
+		return
+	}
+
+	client := client.Client{ID: int64(clientID)}
+
+	if err := client.Get(); err != nil {
+		c.JSON(http.StatusInternalServerError, utils.Error([]string{"Failed to get client", "Алдаа гарлаа"}, err))
+		return
+	}
+
+	client.Password = ""
+	client.Pin = ""
+	c.JSON(http.StatusOK, utils.Success([]string{"Success to get profile", "Амжилттай"}, client))
 }

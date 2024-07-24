@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"kcloudb1/internal/config"
+	"kcloudb1/internal/models/client"
 	"kcloudb1/internal/models/metal"
 	"kcloudb1/internal/models/order"
 	"kcloudb1/internal/models/payment"
@@ -104,6 +105,83 @@ func CreateOrder(c *gin.Context) {
 	tx.Commit()
 
 	c.JSON(http.StatusOK, utils.Success([]string{"Success to create order", "Амжилттай"}, resm))
+}
+
+func CreateVIPMember(c *gin.Context) {
+	clientIDStr, ok := c.Get("clientID")
+
+	if !ok {
+		resp := utils.Error([]string{"Failed to get clientID", "Алдаа гарлаа"}, ok)
+		c.JSON(http.StatusBadRequest, resp)
+		return
+	}
+
+	clientID, err := strconv.ParseInt(clientIDStr.(string), 10, 64)
+
+	if err != nil {
+		resp := utils.Error([]string{"Failed to get clientID parse int64", "Алдаа гарлаа"}, err)
+		c.JSON(http.StatusBadRequest, resp)
+		return
+	}
+
+	var clt client.Client
+	clt.ID = clientID
+	if err := clt.Get(); err != nil {
+		resp := utils.Error([]string{"Failed to get client", "Алдаа гарлаа"}, err)
+		c.JSON(http.StatusInternalServerError, resp)
+		return
+	}
+
+	var vm order.VipMember
+
+	vm.Amount = 100
+	vm.ClientID = clientID
+	vm.Status = "pending"
+
+	if err := vm.Create(); err != nil {
+		resp := utils.Error([]string{"Failed to create vip member", "Алдаа гарлаа"}, err)
+		c.JSON(http.StatusInternalServerError, resp)
+		return
+	}
+
+	newuid := uuid.NewString()
+	ordp := order.OrderPayment{
+		OrderID:             vm.ID,
+		InvoiceCode:         "LISTLY_AGENT_INVOICE",
+		SenderInvoiceNo:     newuid,
+		InvoiceDescription:  "VIP MEMBER",
+		InvoiceReceiverCode: "terminal",
+		SenderBranchCode:    "SALBAR1",
+		Amount:              vm.Amount,
+		CallbackURL:         fmt.Sprintf("http://oggbackend.999.mn:8080/api/v1/payment/vip-member/%s", newuid),
+	}
+
+	if err := ordp.Create(); err != nil {
+		resp := utils.Error([]string{"Failed to create vip member payment", "Алдаа гарлаа"}, err)
+		c.JSON(http.StatusInternalServerError, resp)
+		return
+	}
+
+	res, err := sendInvoice(ordp)
+	if err != nil {
+		resp := utils.Error([]string{"Failed to create vip member payment", "Алдаа гарлаа"}, err)
+		c.JSON(http.StatusInternalServerError, resp)
+		return
+	}
+
+	resm := map[string]interface{}{
+		"order_id":      vm.ID,
+		"invoice_id":    res.InvoiceID,
+		"qr_text":       res.QRText,
+		"qr_image":      res.QRImage,
+		"qPay_shortUrl": res.QPayShortUrl,
+		"urls":          res.Urls,
+		"amount":        vm.Amount,
+		"quantity":      1,
+	}
+
+	c.JSON(http.StatusOK, utils.Success([]string{"Success to create vip member", "Амжилттай"}, resm))
+
 }
 
 func GetOrderList(c *gin.Context) {
