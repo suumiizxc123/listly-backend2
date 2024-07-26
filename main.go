@@ -7,6 +7,7 @@ import (
 	"kcloudb1/internal/routes/client_route"
 	"kcloudb1/internal/routes/metal_route"
 	"kcloudb1/internal/routes/order_route"
+	"kcloudb1/internal/routes/upload_route"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -45,12 +46,18 @@ func main() {
 	client_route.ClientRoute(v1)
 
 	order_route.OrderRoute(v1)
-
 	order_route.BalanceRoute(v1)
 	order_route.PaymentRoute(v1)
+	order_route.WithDrawRoute(v1)
+
 	admin_route.AdminRoute(v1)
 	admin_route.FAQRoute(v1)
-	order_route.WithDrawRoute(v1)
+	admin_route.NewsRoute(v1)
+	admin_route.SliderRoute(v1)
+	admin_route.IngredientRoute(v1)
+	admin_route.ProductRoute(v1)
+
+	upload_route.UploadRoute(v1)
 
 	go cron.CronJob()
 	r.Run(":8080")

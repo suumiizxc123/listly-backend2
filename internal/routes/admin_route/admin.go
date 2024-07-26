@@ -25,5 +25,7 @@ func AdminRoute(r *gin.RouterGroup) {
 		adminRoute.POST("/withdraw", middleware.AuthAdmin(), admin_handler.CancelOrder)
 
 		adminRoute.GET("/withdraw", middleware.AuthAdmin(), middleware.Paginate(), admin_handler.GetWithDrawList)
+
+		adminRoute.POST("/message", middleware.AuthAdmin(), admin_handler.SendMessage)
 	}
 }

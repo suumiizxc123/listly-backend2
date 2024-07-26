@@ -25,6 +25,13 @@ func main() {
 		payment.QPayToken{},
 		admin.Admin{},
 		admin.FAQ{},
+		admin.News{},
+		admin.Slider{},
+		admin.Ingredient{},
+		admin.Product{},
+		admin.ProductImage{},
+		admin.ProductIngredient{},
+
 		order.WithDraw{},
 		order.VipMember{},
 	)

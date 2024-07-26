@@ -367,3 +367,29 @@ func GetWithDrawList(c *gin.Context) {
 	resp = utils.Success([]string{"Success to get withdraws", "Амжилттай"}, wdr)
 	c.JSON(http.StatusOK, resp)
 }
+
+func SendMessage(c *gin.Context) {
+	var input struct {
+		Message string `json:"message"`
+		Phone   string `json:"phone"`
+	}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, utils.Error([]string{"Failed to bind json", "Алдаа гарлаа"}, err))
+		return
+	}
+
+	if input.Message == "" || input.Phone == "" {
+		c.JSON(http.StatusBadRequest, utils.Error([]string{"Failed to send message", "Алдаа гарлаа"}, fmt.Errorf("message or phone not found")))
+		return
+	}
+
+	err := utils.SendMessage(input.Phone, input.Message)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, utils.Error([]string{"Failed to send message", "Алдаа гарлаа"}, err))
+		return
+	}
+
+	c.JSON(http.StatusOK, utils.Success([]string{"Success to send message", "Амжилттай"}, nil))
+}

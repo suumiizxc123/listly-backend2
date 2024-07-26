@@ -10,6 +10,7 @@ import (
 	"math/rand"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -17,6 +18,8 @@ import (
 )
 
 func SendOTP(phone, message string) error {
+
+	message = strings.ReplaceAll(message, " ", "%20")
 
 	url := fmt.Sprintf("https://api.messagepro.mn/send?to=%v&from=72887388&text=%v", phone, message)
 
