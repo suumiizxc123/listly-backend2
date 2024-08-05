@@ -11,10 +11,10 @@ func FAQRoute(r *gin.RouterGroup) {
 
 	faqRoute := r.Group("/faq")
 	{
-		faqRoute.GET("/", admin_handler.GetFAQList)
+		faqRoute.GET("/", middleware.AuthAdmin(), admin_handler.GetFAQList)
 		faqRoute.POST("/", middleware.AuthAdmin(), admin_handler.CreateFAQ)
 		faqRoute.PATCH("/", middleware.AuthAdmin(), admin_handler.UpdateFAQ)
 		faqRoute.DELETE("/by-id", middleware.AuthAdmin(), admin_handler.DeleteFAQ)
-		faqRoute.GET("/by-id", admin_handler.GetFAQ)
+		faqRoute.GET("/by-id", middleware.AuthAdmin(), admin_handler.GetFAQ)
 	}
 }
