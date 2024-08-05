@@ -10,9 +10,9 @@ import (
 func ProductRoute(r *gin.RouterGroup) {
 	productRoute := r.Group("/product")
 	{
-		productRoute.GET("/", admin_handler.GetProductList)
-		productRoute.POST("/", middleware.AuthAdmin(), admin_handler.CreateProduct)
-		productRoute.PATCH("/", middleware.AuthAdmin(), admin_handler.UpdateProduct)
+		productRoute.GET("", admin_handler.GetProductList)
+		productRoute.POST("", middleware.AuthAdmin(), admin_handler.CreateProduct)
+		productRoute.PATCH("", middleware.AuthAdmin(), admin_handler.UpdateProduct)
 		productRoute.DELETE("/by-id", middleware.AuthAdmin(), admin_handler.DeleteProduct)
 		productRoute.GET("/by-id", admin_handler.GetProduct)
 
