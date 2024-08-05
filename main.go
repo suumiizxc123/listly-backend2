@@ -18,7 +18,6 @@ func Cors() gin.HandlerFunc {
 		c.Header("Access-Control-Allow-Origin", "*")
 		c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 		c.Header("Access-Control-Allow-Headers", "Content-Type, Authorization")
-		c.Header("Access-Control-Allow-Credentials", "true")
 
 		if c.Request.Method == "OPTIONS" {
 			c.AbortWithStatus(http.StatusNoContent)
@@ -52,7 +51,7 @@ func main() {
 	order_route.WithDrawRoute(v1)
 
 	admin_route.AdminRoute(v1)
-	// admin_route.FAQRoute(v1)
+	admin_route.FAQRoute(v1)
 	admin_route.NewsRoute(v1)
 	admin_route.SliderRoute(v1)
 	admin_route.IngredientRoute(v1)

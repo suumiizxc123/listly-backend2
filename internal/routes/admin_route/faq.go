@@ -9,7 +9,7 @@ import (
 
 func FAQRoute(r *gin.RouterGroup) {
 
-	faqRoute := r.Group("/faq")
+	faqRoute := r.Group("/admin/faq")
 	{
 		faqRoute.GET("/", admin_handler.GetFAQList)
 		faqRoute.POST("/", middleware.AuthAdmin(), admin_handler.CreateFAQ)
