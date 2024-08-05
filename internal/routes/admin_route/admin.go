@@ -28,11 +28,11 @@ func AdminRoute(r *gin.RouterGroup) {
 
 		adminRoute.POST("/message", middleware.AuthAdmin(), admin_handler.SendMessage)
 
-		adminRoute.GET("/faq", admin_handler.GetFAQList)
+		adminRoute.GET("/faq", middleware.AuthAdmin(), admin_handler.GetFAQList)
 		adminRoute.POST("/faq", middleware.AuthAdmin(), admin_handler.CreateFAQ)
 		adminRoute.PATCH("/faq", middleware.AuthAdmin(), admin_handler.UpdateFAQ)
 		adminRoute.DELETE("/faq/by-id", middleware.AuthAdmin(), admin_handler.DeleteFAQ)
-		adminRoute.GET("/faq/by-id", admin_handler.GetFAQ)
+		adminRoute.GET("/faq/by-id", middleware.AuthAdmin(), admin_handler.GetFAQ)
 	}
 
 }
