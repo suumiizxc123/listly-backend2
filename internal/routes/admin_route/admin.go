@@ -27,15 +27,12 @@ func AdminRoute(r *gin.RouterGroup) {
 		adminRoute.GET("/withdraw", middleware.AuthAdmin(), middleware.Paginate(), admin_handler.GetWithDrawList)
 
 		adminRoute.POST("/message", middleware.AuthAdmin(), admin_handler.SendMessage)
-	}
 
-	faqRoute := r.Group("/faq")
-	{
-		faqRoute.GET("/", admin_handler.GetFAQList)
-		faqRoute.POST("/", middleware.AuthAdmin(), admin_handler.CreateFAQ)
-		faqRoute.PATCH("/", middleware.AuthAdmin(), admin_handler.UpdateFAQ)
-		faqRoute.DELETE("/by-id", middleware.AuthAdmin(), admin_handler.DeleteFAQ)
-		faqRoute.GET("/by-id", admin_handler.GetFAQ)
+		adminRoute.GET("/faq", admin_handler.GetFAQList)
+		adminRoute.POST("/faq", middleware.AuthAdmin(), admin_handler.CreateFAQ)
+		adminRoute.PATCH("/faq", middleware.AuthAdmin(), admin_handler.UpdateFAQ)
+		adminRoute.DELETE("/faq/by-id", middleware.AuthAdmin(), admin_handler.DeleteFAQ)
+		adminRoute.GET("/faq/by-id", admin_handler.GetFAQ)
 	}
 
 }
