@@ -116,6 +116,7 @@ type ProductExtend struct {
 	SalePrice   float32             `json:"sale_price"`
 	Images      []ProductImage      `json:"images" gorm:"foreignKey:ProductID;references:ID"`
 	Ingredients []ProductIngredient `json:"ingredients" gorm:"foreignKey:ProductID;references:ID"`
+	Images2     []string            `json:"images2"`
 	CreatedAt   time.Time           `json:"created_at"`
 }
 

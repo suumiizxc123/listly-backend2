@@ -93,6 +93,12 @@ func GetProductList(c *gin.Context) {
 		return
 	}
 
+	for i, pr := range prs {
+		for _, img := range pr.Images {
+			prs[i].Images2 = append(prs[i].Images2, img.Image)
+		}
+	}
+
 	c.JSON(http.StatusOK, utils.Success([]string{"Success to get product list", "Амжилттай"}, prs))
 }
 
