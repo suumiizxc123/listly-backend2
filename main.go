@@ -1,12 +1,12 @@
 package main
 
 import (
-	"kcloudb1/cron"
 	"kcloudb1/internal/config"
 	"kcloudb1/internal/routes/admin_route"
 	"kcloudb1/internal/routes/client_route"
 	"kcloudb1/internal/routes/metal_route"
 	"kcloudb1/internal/routes/order_route"
+	"kcloudb1/internal/routes/saving_route"
 	"kcloudb1/internal/routes/upload_route"
 	"net/http"
 
@@ -57,8 +57,10 @@ func main() {
 	admin_route.IngredientRoute(v1)
 	admin_route.ProductRoute(v1)
 
+	saving_route.SavingRoute(v1)
+
 	upload_route.UploadRoute(v1)
 
-	go cron.CronJob()
+	// go cron.CronJob()
 	r.Run(":8080")
 }

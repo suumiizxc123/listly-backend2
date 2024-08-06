@@ -6,16 +6,22 @@ import (
 )
 
 type SavingOrder struct {
-	ID          int64     `json:"id"`
-	ClientID    int64     `json:"client_id"`
-	MetalID     int64     `json:"metal_id"`
-	Quantity    float32   `json:"quantity"`
-	Amount      float32   `json:"amount"`
-	Price       float32   `json:"price"`
-	Type        string    `json:"type"`
-	Status      string    `json:"status"`
-	AdminStatus string    `json:"admin_status"`
-	CreatedAt   time.Time `json:"created_at"`
+	ID              int64     `json:"id"`
+	ClientID        int64     `json:"client_id"`
+	MetalID         int64     `json:"metal_id"`
+	Quantity        float32   `json:"quantity"`
+	Amount          float32   `json:"amount"`
+	Price           float32   `json:"price"`
+	Type            string    `json:"type"`
+	Term            int64     `json:"term"`
+	TermGrowth      float32   `json:"term_growth"`
+	ExpectedAmount  float32   `json:"expected_amount"`
+	TransactionText string    `json:"transaction_text"`
+	Status          string    `json:"status"`
+	AdminStatus     string    `json:"admin_status"`
+	StartDate       time.Time `json:"start_date"`
+	EndDate         time.Time `json:"end_date"`
+	CreatedAt       time.Time `json:"created_at"`
 }
 
 func (o *SavingOrder) TableName() string {
@@ -38,6 +44,14 @@ func (o *SavingOrder) Get() error {
 	return config.DB.First(o).Error
 }
 
+func (o *SavingOrder) GetClientTotalCount(clientID int64) int64 {
+	var count int64 = 0
+
+	config.DB.Model(SavingOrder{}).Where("client_id = ?", clientID).Count(&count)
+	return count
+
+}
+
 func (o *SavingOrder) GetAll() ([]SavingOrder, error) {
 	var orders []SavingOrder
 	err := config.DB.Find(&orders).Error
@@ -46,7 +60,7 @@ func (o *SavingOrder) GetAll() ([]SavingOrder, error) {
 
 func (o *SavingOrder) GetByClientID(clientID int64) ([]SavingOrder, error) {
 	var orders []SavingOrder
-	err := config.DB.Where("client_id = ?", clientID).Find(&orders).Error
+	err := config.DB.Where("client_id = ?", clientID).Where("admin_status = ?", "success").Find(&orders).Error
 	return orders, err
 }
 
@@ -109,4 +123,12 @@ type CreateSavingOrderInput struct {
 	ClientID int64   `json:"client_id"`
 	MetalID  int64   `json:"metal_id"`
 	Quantity float32 `json:"quantity"`
+	Term     int64   `json:"term"`
+}
+
+type SavingOutput struct {
+	TotalInvest  float32       `json:"total_invest"`
+	TotalProfit  float32       `json:"total_profit"`
+	TotalAmount  float32       `json:"total_amount"`
+	SavingOrders []SavingOrder `json:"saving_orders"`
 }

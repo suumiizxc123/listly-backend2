@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"kcloudb1/internal/config"
+	"kcloudb1/internal/models/client"
 	"kcloudb1/internal/models/metal"
 	"kcloudb1/internal/models/payment"
 	"kcloudb1/internal/models/saving"
@@ -22,6 +23,7 @@ func CreateSavingOrder(c *gin.Context) {
 	var input saving.CreateSavingOrderInput
 	var sa saving.SavingOrder
 	var met metal.MetalRate
+	var cl client.Client
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		resp := utils.Error([]string{"Failed to bind json", "Алдаа гарлаа"}, err)
@@ -41,8 +43,17 @@ func CreateSavingOrder(c *gin.Context) {
 
 	sa.ClientID = clientID
 
+	sa.Term = input.Term
 	sa.MetalID = input.MetalID
 	sa.Status = "pending"
+
+	cl.ID = clientID
+
+	if err := cl.Get(); err != nil {
+		resp := utils.Error([]string{"Failed to get client", "Алдаа гарлаа"}, err)
+		c.JSON(http.StatusInternalServerError, resp)
+		return
+	}
 
 	if err := met.LastByMetalID(input.MetalID); err != nil {
 		resp := utils.Error([]string{"Failed to get metal", "Алдаа гарлаа"}, err.Error())
@@ -58,11 +69,19 @@ func CreateSavingOrder(c *gin.Context) {
 	}()
 
 	sa.Price = met.Rate
+	sa.Quantity = input.Quantity
 	sa.Amount = sa.Price * sa.Quantity
 	sa.Status = "pending"
 	sa.AdminStatus = "pending"
 	sa.CreatedAt = time.Now()
 	sa.Type = "deposit"
+	sa.StartDate = time.Now()
+	sa.EndDate = sa.StartDate.AddDate(0, 0, int(sa.Term))
+	sa.TermGrowth = getRatio(sa.Term)
+	sa.ExpectedAmount = sa.Amount * (1 + sa.TermGrowth)
+
+	txncount := sa.GetClientTotalCount(clientID)
+	sa.TransactionText = fmt.Sprintf("%v-%v", cl.Phone, txncount+1)
 
 	if err := sa.Create(); err != nil {
 		tx.Rollback()
@@ -108,12 +127,69 @@ func CreateSavingOrder(c *gin.Context) {
 		"urls":          res.Urls,
 		"amount":        sa.Amount,
 		"quantity":      sa.Quantity,
+		"transaction":   sa.TransactionText,
 	}
 
 	tx.Commit()
 
 	c.JSON(http.StatusOK, utils.Success([]string{"Success to create saving order", "Амжилттай"}, resm))
 
+}
+
+func GetSavingOrder(c *gin.Context) {
+
+	clientIDStr := c.MustGet("clientID")
+
+	clientID, err := strconv.ParseInt(clientIDStr.(string), 10, 64)
+
+	if err != nil {
+		resp := utils.Error([]string{"Failed to get clientID parse int64", "Алдаа гарлаа"}, err)
+		c.JSON(http.StatusBadRequest, resp)
+		return
+	}
+
+	var sa saving.SavingOrder
+	sa.ClientID = clientID
+
+	sas, err := sa.GetByClientID(clientID)
+
+	if err != nil {
+		resp := utils.Error([]string{"Failed to get saving order", "Алдаа гарлаа"}, err)
+		c.JSON(http.StatusInternalServerError, resp)
+		return
+	}
+
+	var output saving.SavingOutput
+
+	output.SavingOrders = sas
+
+	output.TotalAmount = 0
+	output.TotalInvest = 0
+	output.TotalProfit = 0
+
+	for _, v := range sas {
+		output.TotalAmount += v.Amount
+		output.TotalInvest += v.Quantity
+		output.TotalProfit += v.ExpectedAmount
+	}
+
+	c.JSON(http.StatusOK, utils.Success([]string{"Success to get saving order", "Амжилттай"}, output))
+}
+
+func getRatio(term int64) float32 {
+	var ratio float32
+
+	if term == 6 {
+		ratio = 0.015
+	} else if term == 12 {
+		ratio = 0.017
+	} else if term == 24 {
+		ratio = 0.019
+	} else if term >= 36 {
+		ratio = 0.02
+	}
+
+	return ratio
 }
 
 func sendInvoice(sadp saving.SavingOrderPayment) (payment.QPayInvoiceResponse, error) {
@@ -156,6 +232,8 @@ func sendInvoice(sadp saving.SavingOrderPayment) (payment.QPayInvoiceResponse, e
 	if err != nil {
 		return payment.QPayInvoiceResponse{}, err
 	}
+
+	fmt.Println("amount", input.Amount)
 
 	var res payment.QPayInvoiceResponse
 	if err := json.Unmarshal(body, &res); err != nil {
