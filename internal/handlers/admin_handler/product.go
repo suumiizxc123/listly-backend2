@@ -86,17 +86,10 @@ func UpdateProduct(c *gin.Context) {
 
 func GetProductList(c *gin.Context) {
 	var pr admin.ProductExtend
-
 	prs, err := pr.GetAll()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, utils.Error([]string{"Failed to get product list", "Алдаа гарлаа"}, err))
 		return
-	}
-
-	for i, pr := range prs {
-		for _, img := range pr.Images {
-			prs[i].Images2 = append(prs[i].Images2, img.Image)
-		}
 	}
 
 	c.JSON(http.StatusOK, utils.Success([]string{"Success to get product list", "Амжилттай"}, prs))

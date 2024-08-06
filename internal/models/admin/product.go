@@ -116,8 +116,20 @@ type ProductExtend struct {
 	SalePrice   float32             `json:"sale_price"`
 	Images      []ProductImage      `json:"images" gorm:"foreignKey:ProductID;references:ID"`
 	Ingredients []ProductIngredient `json:"ingredients" gorm:"foreignKey:ProductID;references:ID"`
-	Images2     []string            `json:"images2"`
 	CreatedAt   time.Time           `json:"created_at"`
+}
+
+type ProductExtend2 struct {
+	ID          int64               `json:"id"`
+	Title       string              `json:"title"`
+	Subtitle    string              `json:"subtitle"`
+	Description string              `json:"description"`
+	Price       float32             `json:"price"`
+	SalePrice   float32             `json:"sale_price"`
+	Images      []ProductImage      `json:"images" gorm:"foreignKey:ProductID;references:ID"`
+	Ingredients []ProductIngredient `json:"ingredients" gorm:"foreignKey:ProductID;references:ID"`
+	CreatedAt   time.Time           `json:"created_at"`
+	Images2     []string            `json:"images2"`
 }
 
 func (p *ProductExtend) TableName() string {
