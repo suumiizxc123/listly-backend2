@@ -7,6 +7,7 @@ import (
 	"kcloudb1/internal/models/metal"
 	"kcloudb1/internal/models/order"
 	"kcloudb1/internal/models/payment"
+	"kcloudb1/internal/models/saving"
 )
 
 func main() {
@@ -28,11 +29,15 @@ func main() {
 		admin.News{},
 		admin.Slider{},
 		admin.Ingredient{},
+
 		admin.Product{},
 		admin.ProductImage{},
 		admin.ProductIngredient{},
 
 		order.WithDraw{},
 		order.VipMember{},
+
+		saving.SavingOrder{},
+		saving.SavingOrderPayment{},
 	)
 }

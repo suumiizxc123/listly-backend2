@@ -10,6 +10,7 @@ import (
 	"kcloudb1/internal/models/client"
 	"kcloudb1/internal/models/order"
 	"kcloudb1/internal/models/payment"
+	"kcloudb1/internal/models/saving"
 	"kcloudb1/internal/utils"
 	"net/http"
 
@@ -68,6 +69,47 @@ func CheckPaymentCallBack(c *gin.Context) {
 
 	c.String(http.StatusOK, newUID)
 
+}
+
+func CheckSavingPaymentCallBack(c *gin.Context) {
+
+	newUID := c.Param("newuid")
+
+	if newUID == "" {
+		c.String(http.StatusBadRequest, "New UID is empty")
+		return
+	}
+
+	var so saving.SavingOrderPayment
+
+	if err := config.DB.Where("sender_invoice_no = ?", newUID).First(&so).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.String(http.StatusNotFound, "Saving order payment not found")
+			return
+		}
+
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if err := config.DB.Model(&saving.SavingOrder{}).Where("id = ?", so.SavingOrderID).Update("status", "success").Error; err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	var soo saving.SavingOrder
+
+	if err := config.DB.Where("id = ?", so.SavingOrderID).First(&soo).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.String(http.StatusNotFound, "Saving order not found")
+			return
+		}
+
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.String(http.StatusOK, newUID)
 }
 
 func CheckPaymentVIPMemberCallBack(c *gin.Context) {

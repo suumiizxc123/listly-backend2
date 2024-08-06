@@ -131,3 +131,21 @@ func (p *ProductExtend) GetAll() ([]ProductExtend, error) {
 	var products []ProductExtend
 	return products, config.DB.Order("created_at desc").Preload(clause.Associations).Find(&products).Error
 }
+
+type ProductImageInput struct {
+	Image string `json:"image"`
+}
+
+type ProductIngredientInput struct {
+	IngredientID int64  `json:"ingredient_id"`
+	Description  string `json:"description"`
+}
+type ProductInput struct {
+	Title       string                   `json:"title"`
+	Subtitle    string                   `json:"subtitle"`
+	Description string                   `json:"description"`
+	Price       float32                  `json:"price"`
+	SalePrice   float32                  `json:"sale_price"`
+	Images      []ProductImageInput      `json:"images"`
+	Ingredients []ProductIngredientInput `json:"ingredients"`
+}

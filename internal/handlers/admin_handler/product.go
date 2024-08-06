@@ -1,6 +1,7 @@
 package admin_handler
 
 import (
+	"kcloudb1/internal/config"
 	"kcloudb1/internal/models/admin"
 	"kcloudb1/internal/utils"
 	"net/http"
@@ -11,16 +12,55 @@ import (
 )
 
 func CreateProduct(c *gin.Context) {
+	var pri admin.ProductInput
 	var pr admin.Product
 
-	if err := c.ShouldBindJSON(&pr); err != nil {
+	if err := c.ShouldBindJSON(&pri); err != nil {
 		c.JSON(http.StatusBadRequest, utils.Error([]string{"Failed to bind json", "Алдаа гарлаа"}, err))
 		return
 	}
 
+	tx := config.DB.Begin()
+
+	pr.Title = pri.Title
+	pr.Subtitle = pri.Subtitle
+	pr.Price = pri.Price
+	pr.Description = pri.Description
 	pr.CreatedAt = time.Now()
 
 	if err := pr.Create(); err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusBadRequest, utils.Error([]string{"Failed to create product", "Алдаа гарлаа"}, err))
+		return
+	}
+
+	for _, ing := range pri.Ingredients {
+		var pi admin.ProductIngredient
+		pi.ProductID = pr.ID
+		pi.IngredientID = ing.IngredientID
+		pi.Description = ing.Description
+		pi.CreatedAt = time.Now()
+		if err := pi.Create(); err != nil {
+			tx.Rollback()
+			c.JSON(http.StatusBadRequest, utils.Error([]string{"Failed to create product ingredient", "Алдаа гарлаа"}, err))
+			return
+		}
+	}
+
+	for _, img := range pri.Images {
+		var pi admin.ProductImage
+		pi.ProductID = pr.ID
+		pi.Image = img.Image
+		pi.CreatedAt = time.Now()
+		if err := pi.Create(); err != nil {
+			tx.Rollback()
+			c.JSON(http.StatusBadRequest, utils.Error([]string{"Failed to create product image", "Алдаа гарлаа"}, err))
+			return
+		}
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
 		c.JSON(http.StatusBadRequest, utils.Error([]string{"Failed to create product", "Алдаа гарлаа"}, err))
 		return
 	}
