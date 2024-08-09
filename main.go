@@ -1,6 +1,7 @@
 package main
 
 import (
+	"kcloudb1/cron"
 	"kcloudb1/internal/config"
 	"kcloudb1/internal/routes/admin_route"
 	"kcloudb1/internal/routes/client_route"
@@ -61,6 +62,6 @@ func main() {
 
 	upload_route.UploadRoute(v1)
 
-	// go cron.CronJob()
+	go cron.CronJob()
 	r.Run(":8080")
 }
