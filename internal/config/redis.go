@@ -6,7 +6,7 @@ var RS *redis.Client
 
 func RedisConfig() {
 
-	opt, err := redis.ParseURL("redis://206.189.82.163:6379")
+	opt, err := redis.ParseURL("rediss://default:AVNS_PLeE9ZTbH05bv1NRWz3@redis-do-user-16975301-0.h.db.ondigitalocean.com:25061")
 	if err != nil {
 		panic(err)
 	}
