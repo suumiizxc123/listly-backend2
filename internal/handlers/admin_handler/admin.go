@@ -16,6 +16,7 @@ import (
 	"kcloudb1/internal/models/client"
 	"kcloudb1/internal/models/metal"
 	"kcloudb1/internal/models/order"
+	"kcloudb1/internal/models/saving"
 )
 
 func LoginByPassword(c *gin.Context) {
@@ -392,4 +393,30 @@ func SendMessage(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, utils.Success([]string{"Success to send message", "Амжилттай"}, nil))
+}
+
+func VerifySaving(c *gin.Context) {
+	savingID := c.Query("saving_id")
+
+	if savingID == "" {
+		c.JSON(http.StatusBadRequest, utils.Error([]string{"Failed to get saving id", "Алдаа гарлаа"}, nil))
+		return
+	}
+
+	savingIDint, err := strconv.ParseInt(savingID, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, utils.Error([]string{"Failed to convert saving id", "Алдаа гарлаа"}, err))
+		return
+	}
+
+	/// check balance and retrieve
+
+	saving := saving.SavingOrder{ID: savingIDint, AdminStatus: "success"}
+
+	if err := saving.Update(); err != nil {
+		c.JSON(http.StatusInternalServerError, utils.Error([]string{"Failed to update saving", "Алдаа гарлаа"}, err))
+		return
+	}
+
+	c.JSON(http.StatusOK, utils.Success([]string{"Success to update saving", "Амжилттай"}, nil))
 }
