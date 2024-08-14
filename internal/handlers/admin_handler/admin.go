@@ -420,3 +420,26 @@ func VerifySaving(c *gin.Context) {
 
 	c.JSON(http.StatusOK, utils.Success([]string{"Success to update saving", "Амжилттай"}, nil))
 }
+
+func GetSavingList(c *gin.Context) {
+	limit, _ := c.Get("limit")
+	sort, _ := c.Get("sort")
+	ord, _ := c.Get("order")
+	offset, _ := c.Get("offset")
+
+	limitInt, _ := strconv.Atoi(limit.(string))
+
+	offsetInt, _ := strconv.Atoi(offset.(string))
+
+	var resp utils.Response
+	var sav []saving.SavingOrder
+
+	if err := config.DB.Limit(limitInt).Order(fmt.Sprintf("%s %s", sort.(string), ord.(string))).Offset(offsetInt).Preload(clause.Associations).Find(&sav).Error; err != nil {
+		resp = utils.Error([]string{"Failed to get savings", "Алдаа гарлаа"}, err)
+		c.JSON(http.StatusInternalServerError, resp)
+		return
+	}
+
+	resp = utils.Success([]string{"Success to get savings", "Амжилттай"}, sav)
+	c.JSON(http.StatusOK, resp)
+}

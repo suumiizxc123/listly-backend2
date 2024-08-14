@@ -29,6 +29,8 @@ func AdminRoute(r *gin.RouterGroup) {
 		adminRoute.POST("/message", middleware.AuthAdmin(), admin_handler.SendMessage)
 		adminRoute.POST("/saving/verify", middleware.AuthAdmin(), admin_handler.VerifySaving)
 
+		adminRoute.GET("/saving", middleware.AuthAdmin(), middleware.Paginate(), admin_handler.GetSavingList)
+
 		// adminRoute.GET("/faq", middleware.AuthAdmin(), admin_handler.GetFAQList)
 		// adminRoute.POST("/faq", middleware.AuthAdmin(), admin_handler.CreateFAQ)
 		// adminRoute.PATCH("/faq", middleware.AuthAdmin(), admin_handler.UpdateFAQ)
