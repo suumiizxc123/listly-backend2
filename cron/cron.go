@@ -33,7 +33,7 @@ func CronJob() {
 		return
 	}
 
-	_, err = scheduler.Every(3).Day().Do(qpayTokenReset)
+	_, err = scheduler.Every(3).Hour().Do(qpayTokenReset)
 	if err != nil {
 		fmt.Println("Error scheduling job:", err)
 		return
