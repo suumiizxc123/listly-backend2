@@ -40,7 +40,7 @@ func (m *MetalRate) Get() error {
 
 func (m *MetalRate) LastByMetalID(metalID any) error {
 
-	return config.DB.Order("created_at desc").First(&m, "metal_id = ?", metalID).Error
+	return config.DB.Order("created_at desc").Where("metal_id = ?", metalID).First(&m).Error
 }
 
 func (m *MetalRate) GetMetalRateByStartToEnd(metalID, startDate, endDate, order any) ([]MetalRate, error) {

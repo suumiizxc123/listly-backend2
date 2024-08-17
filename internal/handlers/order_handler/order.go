@@ -20,11 +20,53 @@ import (
 	"gorm.io/gorm/clause"
 )
 
+func CreateOrderInt(c *gin.Context) {
+	var input order.CreateOrderInput
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		resp := utils.Error([]string{"Failed to bind json", "Алдаа гарлаа"}, err)
+		c.JSON(http.StatusBadRequest, resp)
+		return
+	}
+
+	clientIDStr := c.MustGet("clientID")
+
+	clientID, err := strconv.ParseInt(clientIDStr.(string), 10, 64)
+
+	if err != nil {
+		resp := utils.Error([]string{"Failed to get clientID parse int64", "Алдаа гарлаа"}, err)
+		c.JSON(http.StatusBadRequest, resp)
+		return
+	}
+
+	if clientID != 11 {
+		resp := utils.Error([]string{"Failed to get clientID", "Алдаа гарлаа"}, err)
+		c.JSON(http.StatusBadRequest, resp)
+		return
+	}
+
+	var bal order.Balance
+
+	if err := bal.GetByClientAndMetalID(clientID, input.MetalID); err != nil {
+		resp := utils.Error([]string{"Failed to get balance", "Алдаа гарлаа"}, err)
+		c.JSON(http.StatusInternalServerError, resp)
+		return
+	}
+
+	if err := config.DB.Model(&order.Balance{}).Where("client_id = ? AND metal_id = ?", clientID, input.MetalID).Update("quantity", bal.Quantity+input.Quantity).Error; err != nil {
+		resp := utils.Error([]string{"Failed to update balance", "Алдаа гарлаа"}, err)
+		c.JSON(http.StatusInternalServerError, resp)
+		return
+	}
+
+	resp := utils.Success([]string{"Success to create order", "Амжилттай"}, nil)
+	c.JSON(http.StatusOK, resp)
+
+}
+
 func CreateOrder(c *gin.Context) {
-	// timeStart := time.Now()
 	var input order.CreateOrderInput
 	var ord order.Order
-	// var ordp order.OrderPayment
 	var met metal.MetalRate
 
 	if err := c.ShouldBindJSON(&input); err != nil {
