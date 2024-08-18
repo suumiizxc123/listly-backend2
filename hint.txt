@@ -16,5 +16,3 @@ docker build -t suumiizxc0519/onegram:v1.0.1 .
 docker push suumiizxc0519/onegram:v1.0.1
 
 ssh root@206.189.82.163
-
-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
